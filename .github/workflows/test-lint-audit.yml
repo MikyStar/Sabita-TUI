@@ -1,0 +1,24 @@
+name: Test Lint Audit
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cargo-make
+      run: cargo install --force cargo-make
+    - name: Build
+      run: cargo build --verbose
+    - name: Verifications
+      run: cargo make pre-merge
