@@ -1,0 +1,137 @@
+{
+    "meta": {
+        "states": [
+            {
+                "name": "todo",
+                "hexColor": "#ff8f00",
+                "icon": "☐"
+            },
+            {
+                "name": "wip",
+                "hexColor": "#ab47bc",
+                "icon": "✹"
+            },
+            {
+                "name": "done",
+                "hexColor": "#66bb6a",
+                "icon": "✔"
+            }
+        ]
+    },
+    "datas": [
+        {
+            "name": "controls",
+            "id": 0,
+            "subtasks": [
+                {
+                    "name": "mouse click",
+                    "id": 1,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "hjkl for cell jumps",
+                    "id": 2,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "HJKL for region jumps",
+                    "id": 3,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "q or Q or Esc to quit app",
+                    "id": 5,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "tab to make a new one",
+                    "id": 11,
+                    "subtasks": [
+                        {
+                            "name": "make a confirmation if sudoku in progress",
+                            "id": 12,
+                            "timestamp": "01/11/2025",
+                            "state": "todo"
+                        }
+                    ],
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "a for increase difficulty ; x for decrease",
+                    "id": 13,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "no click nor move to a prefilled cell",
+                    "id": 18,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                }
+            ],
+            "timestamp": "01/11/2025",
+            "state": "todo"
+        },
+        {
+            "name": "view",
+            "id": 6,
+            "subtasks": [
+                {
+                    "name": "success streak if more than one sudoku",
+                    "id": 7,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "timer for current sudoku",
+                    "id": 8,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "timer for current session if more than one sudoku",
+                    "id": 9,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "difficulty",
+                    "id": 10,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "controls",
+                    "id": 14,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "change matrix to green on success",
+                    "id": 15,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "change matrix to red on last cell filled but sudoku wrong",
+                    "id": 16,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                },
+                {
+                    "name": "bold text for premade values",
+                    "id": 17,
+                    "timestamp": "01/11/2025",
+                    "state": "todo"
+                }
+            ],
+            "timestamp": "01/11/2025",
+            "state": "todo"
+        }
+    ]
+}
