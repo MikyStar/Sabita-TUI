@@ -1,3 +1,4 @@
+use core::fmt;
 use std::env;
 
 ////////////////////////////////////////
@@ -7,6 +8,18 @@ pub enum ACTION {
     RunUi,
     Help,
     Version,
+}
+
+impl fmt::Display for ACTION {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let action = match self {
+            ACTION::RunUi => "RunUi",
+            ACTION::Help => "Help",
+            ACTION::Version => "Version",
+        };
+
+        write!(f, "{action}")
+    }
 }
 
 ////////////////////////////////////////

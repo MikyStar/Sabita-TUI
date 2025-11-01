@@ -1,6 +1,9 @@
-use sabita_tui::core::{
-    cli::{parse_args, ACTION},
-    constants::{PKG_NAME, PKG_VERSION},
+use sabita_tui::{
+    core::{
+        cli::{parse_args, ACTION},
+        constants::{PKG_NAME, PKG_VERSION},
+    },
+    view::tui::run_tui,
 };
 
 ////////////////////////////////////////
@@ -8,10 +11,10 @@ use sabita_tui::core::{
 fn main() {
     let action = parse_args();
 
+    print!("{action}");
+
     match action {
-        ACTION::RunUi => {
-            println!("todo");
-        }
+        ACTION::RunUi => run_tui().unwrap(),
         ACTION::Version => {
             version();
         }
