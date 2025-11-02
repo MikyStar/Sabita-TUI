@@ -144,6 +144,7 @@ fn render_grid(f: &mut Frame, app: &App, area: Rect) {
     let rows = Layout::default()
         .direction(Direction::Vertical)
         .constraints(vec![Constraint::Length(3); 9])
+        .spacing(0)
         .split(area);
 
     for row in 0..9 {
@@ -151,19 +152,31 @@ fn render_grid(f: &mut Frame, app: &App, area: Rect) {
         let cols = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![Constraint::Length(6); 9])
+            .spacing(0)
             .split(rows[row]);
 
         for col in 0..9 {
             let is_selected = app.cursor_row == row && app.cursor_col == col;
-            let is_thick_right = col % 3 == 2 && col < 8;
-            let is_thick_bottom = row % 3 == 2 && row < 8;
 
-            let mut borders = Borders::ALL;
+            // Determine which borders to show to avoid double borders
+            let mut borders = Borders::empty();
+            borders |= Borders::TOP;
+            borders |= Borders::LEFT;
+            if row == 8 {
+                borders |= Borders::BOTTOM;
+            }
+            if col == 8 {
+                borders |= Borders::RIGHT;
+            }
+
             let mut border_style = Style::default().fg(Color::DarkGray);
 
             // Thicker borders for 3x3 boxes
-            if is_thick_right || is_thick_bottom {
-                border_style = Style::default().fg(Color::White);
+            if col % 3 == 0 && col > 0 {
+                border_style = border_style.fg(Color::White);
+            }
+            if row % 3 == 0 && row > 0 {
+                border_style = border_style.fg(Color::White);
             }
 
             let cell_value = app.grid[row][col];
