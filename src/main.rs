@@ -11,13 +11,9 @@ use sabita_tui::{
 fn main() {
     let action = parse_args();
 
-    print!("{action}");
-
     match action {
         ACTION::RunUi => run_tui().unwrap(),
-        ACTION::Version => {
-            version();
-        }
+        ACTION::Version => version(),
         ACTION::Help => {
             version();
             println!();
