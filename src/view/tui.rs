@@ -1,12 +1,11 @@
-use std::error::Error;
-use std::io;
-use std::time::Duration;
+use std::{error::Error, io, time::Duration};
 
-use crossterm::event::{self, Event as CEvent, KeyCode};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
-use crossterm::ExecutableCommand;
-use ratatui::backend::CrosstermBackend;
-use ratatui::Terminal;
+use crossterm::{
+    event::{self, Event as CEvent, KeyCode},
+    terminal::{disable_raw_mode, enable_raw_mode},
+    ExecutableCommand,
+};
+use ratatui::{backend::CrosstermBackend, Terminal};
 
 use super::grid::render_grid;
 
@@ -39,9 +38,9 @@ pub fn run_tui() -> Result<(), Box<dyn Error>> {
 
 fn make_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
     loop {
-        terminal.draw(|f| {
-            let size = f.area();
-            render_grid(size, f);
+        terminal.draw(|frame| {
+            let size = frame.area();
+            render_grid(size, frame);
         })?;
 
         // poll for events with a timeout so the UI can react to resize

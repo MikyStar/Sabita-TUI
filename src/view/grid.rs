@@ -4,6 +4,7 @@ use ratatui::{
     text::Span,
     widgets::{Block, Borders},
 };
+use sabita::core::constants::LENGTH_DIMENSION;
 
 use super::cell::make_cell;
 
@@ -14,21 +15,26 @@ use super::cell::make_cell;
 /// terminal is too short vertically, the cell size is reduced so the whole grid
 /// fits vertically.
 pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
-    let total_cols = area.width; // terminal width in characters
-    let total_rows = area.height; // terminal height in characters
+    let dimension = LENGTH_DIMENSION as u16;
+
+    let Rect {
+        width: total_cols,
+        height: total_rows,
+        ..
+    } = area; // terminal height in characters
 
     // Target grid width = 95% of available width
     let target_grid_width = ((total_cols as f32) * 0.95).floor() as u16;
 
     // Each cell width (integer division). Guarantee at least 1.
-    let mut cell_w = target_grid_width / 9;
+    let mut cell_w = target_grid_width / dimension;
     if cell_w == 0 {
         cell_w = 1;
     }
 
     // We want square cells, so height == width. But terminal may not have enough rows.
     // Calculate the maximum cell height that would fit vertically.
-    let max_cell_h = total_rows / 9;
+    let max_cell_h = total_rows / dimension;
 
     // Final cell size is min(cell_w, max_cell_h)
     let mut cell_h = cell_w.min(max_cell_h);
@@ -39,10 +45,10 @@ pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
     // If reducing cell_h below cell_w (because of height constraints), we must also
     // recalc grid width so it doesn't overflow horizontally. This keeps the cells
     // square while ensuring the grid fits both dimensions.
-    let grid_width = cell_w * 9;
+    let grid_width = cell_w * dimension;
     if grid_width > total_cols {
         // shrink cell_w to fit horizontally
-        cell_w = total_cols / 9;
+        cell_w = total_cols / dimension;
         if cell_w == 0 {
             cell_w = 1;
         }
@@ -54,8 +60,8 @@ pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
     }
 
     // Recompute final grid dimensions
-    let final_grid_width = cell_w * 9;
-    let final_grid_height = cell_h * 9;
+    let final_grid_width = cell_w * dimension;
+    let final_grid_height = cell_h * dimension;
 
     // Compute offsets to center the grid in the terminal
     let offset_x = if total_cols > final_grid_width {
@@ -78,10 +84,10 @@ pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
     frame.render_widget(outer_block, outer);
 
     // Render each cell
-    for r in 0..9u16 {
-        for c in 0..9u16 {
-            let x = offset_x + c * cell_w;
-            let y = offset_y + r * cell_h;
+    for row in 0..dimension {
+        for column in 0..dimension {
+            let x = offset_x + column * cell_w;
+            let y = offset_y + row * cell_h;
 
             // Ensure we don't create an area that extends outside the terminal.
             let width = if x + cell_w > area.width {
@@ -102,9 +108,11 @@ pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
 
             let cell_area = Rect::new(x, y, width, height);
 
-            let title = format!("{}", r * 9 + c + 1); // 1..81 numbering
+            let title = format!("{}", row * 9 + column + 1); // 1..81 numbering
 
             let cell = make_cell(&title, cell_area, true);
+
+            // println!("{r}:{c} -> {x} {y} {width} {height}")
 
             frame.render_widget(cell, cell_area);
         }
