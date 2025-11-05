@@ -143,41 +143,24 @@ fn render_grid(f: &mut Frame, app: &App, area: Rect) {
     // Create 9 rows
     let rows = Layout::default()
         .direction(Direction::Vertical)
-        .constraints(vec![Constraint::Length(3); 9])
-        .spacing(0)
+        .constraints(vec![Constraint::Ratio(1, 9); 9])
         .split(area);
 
+    let mut col_should_black = true;
+
     for row in 0..9 {
+        if row == 3 || row == 6 {
+            col_should_black = !col_should_black;
+        }
+
         // Create 9 columns
         let cols = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Length(6); 9])
-            .spacing(0)
+            .constraints(vec![Constraint::Ratio(1, 9); 9])
             .split(rows[row]);
 
         for col in 0..9 {
             let is_selected = app.cursor_row == row && app.cursor_col == col;
-
-            // Determine which borders to show to avoid double borders
-            let mut borders = Borders::empty();
-            borders |= Borders::TOP;
-            borders |= Borders::LEFT;
-            if row == 8 {
-                borders |= Borders::BOTTOM;
-            }
-            if col == 8 {
-                borders |= Borders::RIGHT;
-            }
-
-            let mut border_style = Style::default().fg(Color::DarkGray);
-
-            // Thicker borders for 3x3 boxes
-            if col % 3 == 0 && col > 0 {
-                border_style = border_style.fg(Color::White);
-            }
-            if row % 3 == 0 && row > 0 {
-                border_style = border_style.fg(Color::White);
-            }
 
             let cell_value = app.grid[row][col];
             let text = if let Some(num) = cell_value {
@@ -186,15 +169,24 @@ fn render_grid(f: &mut Frame, app: &App, area: Rect) {
                 " ".to_string()
             };
 
+            if col == 3 || col == 6 {
+                col_should_black = !col_should_black;
+            }
+
             let mut style = Style::default().fg(Color::White);
             if is_selected {
                 style = style.bg(Color::Blue).add_modifier(Modifier::BOLD);
+            } else {
+                if !col_should_black {
+                    style = style.bg(Color::DarkGray);
+                } else {
+                    style = style.bg(Color::Black);
+                }
             }
 
             let cell = Paragraph::new(text)
                 .style(style)
-                .alignment(Alignment::Center)
-                .block(Block::default().borders(borders).border_style(border_style));
+                .alignment(Alignment::Center);
 
             f.render_widget(cell, cols[col]);
         }
