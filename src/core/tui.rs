@@ -22,7 +22,7 @@ pub fn run_tui() -> Result<(), io::Error> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut state = State::new();
-    let res = run_app(&mut terminal, &mut state);
+    let res = main_loop(&mut terminal, &mut state);
 
     // Restore terminal
     disable_raw_mode()?;
@@ -40,7 +40,9 @@ pub fn run_tui() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(
+////////////////////
+
+fn main_loop<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     state: &mut State,
 ) -> io::Result<()> {
@@ -48,7 +50,7 @@ fn run_app<B: ratatui::backend::Backend>(
         terminal.draw(|f| main_page(f, state))?;
 
         if handle_keyboard_events(state)? {
-            return Ok(());
+            return Ok(()); // Stop the loop
         }
     }
 }

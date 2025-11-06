@@ -5,6 +5,8 @@ use ratatui::{
     Frame,
 };
 
+use sabita::core::constants::PKG_NAME as SABITA_PKG_NAME;
+
 use crate::{
     core::state::State,
     view::{grid::render_grid, utils::center_rect},
@@ -12,8 +14,8 @@ use crate::{
 
 ////////////////////////////////////////
 
-pub fn main_page(f: &mut Frame, state: &State) {
-    let size = f.area();
+pub fn main_page(frame: &mut Frame, state: &State) {
+    let size = frame.area();
 
     // Create main layout with padding
     let chunks = Layout::default()
@@ -26,29 +28,42 @@ pub fn main_page(f: &mut Frame, state: &State) {
         ])
         .split(size);
 
-    // Title
-    let title = Paragraph::new("Sudoku")
+    let title = title();
+    frame.render_widget(title, chunks[0]);
+
+    // Calculate grid area (centered and square-ish)
+    let grid_area = center_rect(chunks[1], 60, 27);
+
+    // Render the grid
+    render_grid(frame, state, grid_area);
+
+    // Instructions
+    let instructions = instructions();
+    frame.render_widget(instructions, chunks[2]);
+}
+
+////////////////////
+
+fn title<'a>() -> Paragraph<'a> {
+    let text = String::from(SABITA_PKG_NAME).to_uppercase();
+
+    Paragraph::new(text)
         .style(
             Style::default()
                 .fg(Color::Cyan)
                 .add_modifier(Modifier::BOLD),
         )
         .alignment(Alignment::Center)
-        .block(Block::default().borders(Borders::ALL));
-    f.render_widget(title, chunks[0]);
+        .block(Block::default().borders(Borders::ALL))
+}
 
-    // Calculate grid area (centered and square-ish)
-    let grid_area = center_rect(chunks[1], 60, 27);
-
-    // Render the grid
-    render_grid(f, state, grid_area);
-
-    // Instructions
-    let instructions = Paragraph::new(
+fn instructions<'a>() -> Paragraph<'a> {
+    let text = String::from(
         "Arrow keys/hjkl: Move | 1-9: Enter number | 0/Backspace: Clear | q/Esc: Close",
-    )
-    .style(Style::default().fg(Color::Gray))
-    .alignment(Alignment::Center)
-    .block(Block::default().borders(Borders::ALL));
-    f.render_widget(instructions, chunks[2]);
+    );
+
+    Paragraph::new(text)
+        .style(Style::default().fg(Color::Gray))
+        .alignment(Alignment::Center)
+        .block(Block::default().borders(Borders::ALL))
 }
