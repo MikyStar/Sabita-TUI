@@ -1,12 +1,15 @@
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 
-use crate::{core::state::State, view::app::main_page};
+use crate::{
+    core::{events::handle_keyboard_events, state::State},
+    view::app::main_page,
+};
 
 ////////////////////////////////////////
 
@@ -44,23 +47,8 @@ fn run_app<B: ratatui::backend::Backend>(
     loop {
         terminal.draw(|f| main_page(f, state))?;
 
-        // TODO externalize events
-
-        if let Event::Key(key) = event::read()? {
-            match key.code {
-                KeyCode::Char('q') => return Ok(()),
-                KeyCode::Up | KeyCode::Char('k') => state.move_cursor(-1, 0),
-                KeyCode::Down | KeyCode::Char('j') => state.move_cursor(1, 0),
-                KeyCode::Left | KeyCode::Char('h') => state.move_cursor(0, -1),
-                KeyCode::Right | KeyCode::Char('l') => state.move_cursor(0, 1),
-                KeyCode::Char(c) if c.is_ascii_digit() => {
-                    if let Some(d) = c.to_digit(10) {
-                        state.set_number(d as u8);
-                    }
-                }
-                KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
-                _ => {}
-            }
+        if handle_keyboard_events(state)? {
+            return Ok(());
         }
     }
 }

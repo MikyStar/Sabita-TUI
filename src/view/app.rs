@@ -44,10 +44,11 @@ pub fn main_page(f: &mut Frame, state: &State) {
     render_grid(f, state, grid_area);
 
     // Instructions
-    let instructions =
-        Paragraph::new("Arrow keys/hjkl: Move | 1-9: Enter number | 0/Backspace: Clear | q: Quit")
-            .style(Style::default().fg(Color::Gray))
-            .alignment(Alignment::Center)
-            .block(Block::default().borders(Borders::ALL));
+    let instructions = Paragraph::new(
+        "Arrow keys/hjkl: Move | 1-9: Enter number | 0/Backspace: Clear | q/Esc: Close",
+    )
+    .style(Style::default().fg(Color::Gray))
+    .alignment(Alignment::Center)
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(instructions, chunks[2]);
 }
