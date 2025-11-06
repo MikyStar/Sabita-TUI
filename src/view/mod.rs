@@ -1,4 +1,3 @@
-pub mod cell;
+pub mod app;
 pub mod grid;
-pub mod temp;
-pub mod tui;
+pub mod utils;

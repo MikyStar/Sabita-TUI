@@ -1,10 +1,7 @@
-use sabita_tui::{
-    core::{
-        cli::{parse_args, ACTION},
-        constants::{PKG_NAME, PKG_VERSION},
-    },
-    view::temp::claude,
-    // view::tui::run_tui,
+use sabita_tui::core::{
+    cli::{parse_args, ACTION},
+    constants::{PKG_NAME, PKG_VERSION},
+    tui::run_tui,
 };
 
 ////////////////////////////////////////
@@ -13,7 +10,7 @@ fn main() {
     let action = parse_args();
 
     match action {
-        ACTION::RunUi => claude().unwrap(),
+        ACTION::RunUi => run_tui().unwrap(),
         ACTION::Version => version(),
         ACTION::Help => {
             version();

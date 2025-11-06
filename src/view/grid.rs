@@ -1,120 +1,71 @@
 use ratatui::{
-    layout::Rect,
-    style::{Modifier, Style},
-    text::Span,
-    widgets::{Block, Borders},
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    style::{Color, Modifier, Style},
+    widgets::Paragraph,
+    Frame,
 };
 use sabita::core::constants::LENGTH_DIMENSION;
 
-use super::cell::make_cell;
+use crate::core::state::{State, LENGTH_USIZE};
 
 ////////////////////////////////////////
 
-/// Render a 9x9 square grid where each cell is the same size. The grid's width
-/// is computed to use 95% of the available terminal width (if possible). If the
-/// terminal is too short vertically, the cell size is reduced so the whole grid
-/// fits vertically.
-pub fn render_grid(area: Rect, frame: &mut ratatui::Frame) {
-    let dimension = LENGTH_DIMENSION as u16;
+pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
+    // Create 9 rows
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![
+            Constraint::Ratio(1, LENGTH_DIMENSION.into());
+            LENGTH_DIMENSION.into()
+        ])
+        .split(area);
 
-    let Rect {
-        width: total_cols,
-        height: total_rows,
-        ..
-    } = area; // terminal height in characters
+    let mut col_should_black = true;
 
-    // Target grid width = 95% of available width
-    let target_grid_width = ((total_cols as f32) * 0.95).floor() as u16;
-
-    // Each cell width (integer division). Guarantee at least 1.
-    let mut cell_w = target_grid_width / dimension;
-    if cell_w == 0 {
-        cell_w = 1;
-    }
-
-    // We want square cells, so height == width. But terminal may not have enough rows.
-    // Calculate the maximum cell height that would fit vertically.
-    let max_cell_h = total_rows / dimension;
-
-    // Final cell size is min(cell_w, max_cell_h)
-    let mut cell_h = cell_w.min(max_cell_h);
-    if cell_h == 0 {
-        cell_h = 1;
-    }
-
-    // If reducing cell_h below cell_w (because of height constraints), we must also
-    // recalc grid width so it doesn't overflow horizontally. This keeps the cells
-    // square while ensuring the grid fits both dimensions.
-    let grid_width = cell_w * dimension;
-    if grid_width > total_cols {
-        // shrink cell_w to fit horizontally
-        cell_w = total_cols / dimension;
-        if cell_w == 0 {
-            cell_w = 1;
+    for row in 0..LENGTH_USIZE {
+        if row == 3 || row == 6 {
+            col_should_black = !col_should_black;
         }
-        // recompute cell_h to keep squares but not exceed height
-        cell_h = cell_w.min(max_cell_h);
-        if cell_h == 0 {
-            cell_h = 1;
-        }
-    }
 
-    // Recompute final grid dimensions
-    let final_grid_width = cell_w * dimension;
-    let final_grid_height = cell_h * dimension;
+        // Create 9 columns
+        let cols = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![
+                Constraint::Ratio(1, LENGTH_DIMENSION.into());
+                LENGTH_DIMENSION.into()
+            ])
+            .split(rows[row]);
 
-    // Compute offsets to center the grid in the terminal
-    let offset_x = if total_cols > final_grid_width {
-        (total_cols - final_grid_width) / 2
-    } else {
-        0
-    };
-    let offset_y = if total_rows > final_grid_height {
-        (total_rows - final_grid_height) / 2
-    } else {
-        0
-    };
+        for col in 0..LENGTH_USIZE {
+            let is_selected = state.cursor_row == row && state.cursor_col == col;
 
-    // Draw a faint outer block that represents the grid area
-    let outer = Rect::new(offset_x, offset_y, final_grid_width, final_grid_height);
-    let outer_block = Block::default().borders(Borders::NONE).title(Span::styled(
-        "9x9 grid",
-        Style::default().add_modifier(Modifier::BOLD),
-    ));
-    frame.render_widget(outer_block, outer);
-
-    // Render each cell
-    for row in 0..dimension {
-        for column in 0..dimension {
-            let x = offset_x + column * cell_w;
-            let y = offset_y + row * cell_h;
-
-            // Ensure we don't create an area that extends outside the terminal.
-            let width = if x + cell_w > area.width {
-                area.width - x
+            let cell_value = state.grid[row][col];
+            let text = if let Some(num) = cell_value {
+                num.to_string()
             } else {
-                cell_w
-            };
-            let height = if y + cell_h > area.height {
-                area.height - y
-            } else {
-                cell_h
+                " ".to_string()
             };
 
-            // If width or height is zero, skip drawing this cell.
-            if width == 0 || height == 0 {
-                continue;
+            if col == 3 || col == 6 {
+                col_should_black = !col_should_black;
             }
 
-            let cell_area = Rect::new(x, y, width, height);
+            let mut style = Style::default().fg(Color::White);
+            if is_selected {
+                style = style.bg(Color::Blue).add_modifier(Modifier::BOLD);
+            } else {
+                if !col_should_black {
+                    style = style.bg(Color::DarkGray);
+                } else {
+                    style = style.bg(Color::Black);
+                }
+            }
 
-            let title = format!("{}", row * 9 + column + 1); // 1..81 numbering
+            let cell = Paragraph::new(text)
+                .style(style)
+                .alignment(Alignment::Center);
 
-            let cell = make_cell(&title, cell_area, true);
-
-            // println!("{r}:{c} -> {x} {y} {width} {height}")
-
-            frame.render_widget(cell, cell_area);
+            f.render_widget(cell, cols[col]);
         }
     }
 }
