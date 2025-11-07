@@ -12,11 +12,10 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
 
     if let Event::Key(key) = event {
         match key.code {
-            KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
-            KeyCode::Up | KeyCode::Char('k') => state.move_cursor(-1, 0),
-            KeyCode::Down | KeyCode::Char('j') => state.move_cursor(1, 0),
-            KeyCode::Left | KeyCode::Char('h') => state.move_cursor(0, -1),
-            KeyCode::Right | KeyCode::Char('l') => state.move_cursor(0, 1),
+            KeyCode::Up | KeyCode::Char('k') => state.move_cell_top(),
+            KeyCode::Down | KeyCode::Char('j') => state.move_cell_bottom(),
+            KeyCode::Left | KeyCode::Char('h') => state.move_cell_left(),
+            KeyCode::Right | KeyCode::Char('l') => state.move_cell_right(),
             KeyCode::Char(c) if c.is_ascii_digit() => {
                 if let Some(d) = c.to_digit(10) {
                     state.set_number(d as u8);
@@ -24,6 +23,7 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
             }
             KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
 
+            KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
         }
     }

@@ -1,8 +1,6 @@
-use sabita::core::{
-    constants::LENGTH_DIMENSION,
-    grid::{BoxLocation, Grid, GridValues},
-    validation::validate,
-};
+use std::usize;
+
+use sabita::core::{constants::LENGTH_DIMENSION, grid::Grid, validation::validate};
 
 ////////////////////////////////////////
 
@@ -41,14 +39,62 @@ impl State {
     }
 
     /////////////////
-    // Private
+    // Public
 
-    pub fn move_cursor(&mut self, dr: i32, dc: i32) {
-        let new_row = (self.cursor_row as i32 + dr).clamp(0, 8) as usize;
-        let new_col = (self.cursor_col as i32 + dc).clamp(0, 8) as usize;
+    pub fn move_cell_left(&mut self) {
+        for col_index in (0..self.cursor_col).rev() {
+            let cell = self.original_grid.values[self.cursor_row][col_index];
 
-        self.cursor_row = new_row;
-        self.cursor_col = new_col;
+            if cell == 0 {
+                self.cursor_col = col_index;
+                break;
+            }
+        }
+    }
+
+    pub fn move_cell_right(&mut self) {
+        let next_col = self.cursor_col + 1;
+
+        if next_col >= LENGTH_USIZE {
+            return;
+        }
+
+        for col_index in next_col..LENGTH_USIZE {
+            let cell = self.original_grid.values[self.cursor_row][col_index];
+
+            if cell == 0 {
+                self.cursor_col = col_index;
+                break;
+            }
+        }
+    }
+
+    pub fn move_cell_top(&mut self) {
+        for row_index in (0..self.cursor_row).rev() {
+            let cell = self.original_grid.values[row_index][self.cursor_col];
+
+            if cell == 0 {
+                self.cursor_row = row_index;
+                break;
+            }
+        }
+    }
+
+    pub fn move_cell_bottom(&mut self) {
+        let next_row = self.cursor_row + 1;
+
+        if next_row >= LENGTH_USIZE {
+            return;
+        }
+
+        for row_index in next_row..LENGTH_USIZE {
+            let cell = self.original_grid.values[row_index][self.cursor_col];
+
+            if cell == 0 {
+                self.cursor_row = row_index;
+                break;
+            }
+        }
     }
 
     pub fn set_number(&mut self, num: u8) {
@@ -77,4 +123,12 @@ impl State {
 
     /////////////////
     // Private
+
+    pub fn move_cursor(&mut self, row_action: i32, column_action: i32) {
+        let new_row = (self.cursor_row as i32 + row_action).clamp(0, 8) as usize;
+        let new_col = (self.cursor_col as i32 + column_action).clamp(0, 8) as usize;
+
+        self.cursor_row = new_row;
+        self.cursor_col = new_col;
+    }
 }
