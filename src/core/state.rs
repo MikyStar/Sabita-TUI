@@ -14,6 +14,7 @@ pub const BASE_MISSING_VALUES: u8 = 30;
 ////////////////////////////////////////
 
 pub struct State {
+    // Public
     pub grid_to_solve: Grid,
     pub original_grid: Grid,
 
@@ -22,6 +23,8 @@ pub struct State {
 
     pub original_nb_missing_values: u8,
     pub remaining_nb_missing_values: u8,
+    // Private
+    memoized_missing_box_locations: Vec<BoxLocation>,
 }
 
 /////////////////
@@ -30,7 +33,9 @@ impl State {
     pub fn new() -> State {
         let grid = Grid::generate(Some(BASE_MISSING_VALUES));
 
-        let BoxLocation { line, column, .. } = grid.locate_missing_box()[0];
+        let memoized_missing_box_locations = grid.locate_missing_box();
+        let BoxLocation { line, column, .. } = memoized_missing_box_locations[0];
+
         State {
             grid_to_solve: grid.clone(),
             original_grid: grid.clone(),
@@ -40,6 +45,7 @@ impl State {
 
             original_nb_missing_values: BASE_MISSING_VALUES,
             remaining_nb_missing_values: BASE_MISSING_VALUES,
+            memoized_missing_box_locations,
         }
     }
 
@@ -103,12 +109,13 @@ impl State {
     }
 
     pub fn move_next_cell(&mut self) {
-        let missing_cells = self.original_grid.locate_missing_box();
+        let missing_cells = self.memoized_missing_box_locations.clone();
 
         for (index, cell) in missing_cells.iter().enumerate() {
             let BoxLocation { line, column, .. } = cell;
 
             let is_current_cell = *line == self.cursor_row && *column == self.cursor_col;
+
             if !is_current_cell {
                 continue;
             }
@@ -135,6 +142,40 @@ impl State {
         self.cursor_row = line;
         self.cursor_col = column;
     }
+
+    pub fn move_previous_cell(&mut self) {
+        let missing_cells = self.memoized_missing_box_locations.clone();
+
+        for (index, cell) in missing_cells.iter().enumerate() {
+            let BoxLocation { line, column, .. } = cell;
+
+            let is_current_cell = *line == self.cursor_row && *column == self.cursor_col;
+
+            if !is_current_cell {
+                continue;
+            }
+
+            if let Some(new_index) = index.checked_sub(1) {
+                let BoxLocation {
+                    line: next_row,
+                    column: next_col,
+                    ..
+                } = missing_cells[new_index];
+
+                self.cursor_row = next_row;
+                self.cursor_col = next_col;
+
+                return;
+            }
+        }
+
+        // If not found before, go back to first available cell
+        let BoxLocation { line, column, .. } = missing_cells[missing_cells.len() - 1];
+
+        self.cursor_row = line;
+        self.cursor_col = column;
+    }
+
     pub fn set_number(&mut self, num: u8) {
         if num >= 1 && num <= LENGTH_DIMENSION {
             let previous_value = self.grid_to_solve.values[self.cursor_row][self.cursor_col];
@@ -161,16 +202,15 @@ impl State {
     }
 
     fn reset_state(&mut self) {
-        let base_grid = self.original_grid.clone();
+        let BoxLocation { line, column, .. } = self.memoized_missing_box_locations[0];
 
-        let BoxLocation { line, column, .. } = base_grid.locate_missing_box()[0];
-
-        self.grid_to_solve = base_grid;
+        self.grid_to_solve = self.original_grid.clone();
 
         self.cursor_row = line;
         self.cursor_col = column;
 
         self.remaining_nb_missing_values = self.original_nb_missing_values;
+
     }
 
     /////////////////
