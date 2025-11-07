@@ -15,4 +15,4 @@ rusty-hook = "^0.11.2"
 [dependencies]
 crossterm = "0.29.0"
 ratatui = "0.29.0"
-sabita = "0.4.0"
+sabita = "0.4.3"
