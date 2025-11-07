@@ -213,7 +213,7 @@ impl State {
         self.is_solved = None;
     }
 
-    pub fn reset_state(&mut self) {
+    pub fn reset(&mut self) {
         let BoxLocation { line, column, .. } = self.memoized_missing_box_locations[0];
 
         self.grid_to_solve = self.original_grid.clone();

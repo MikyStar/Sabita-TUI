@@ -31,6 +31,7 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
 
             // App
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
+            KeyCode::Char('r') => state.reset(),
             _ => {}
         }
     }
