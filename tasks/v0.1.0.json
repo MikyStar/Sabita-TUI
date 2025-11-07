@@ -33,22 +33,16 @@
                     "name": "hjkl for cell jumps",
                     "id": 2,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
-                },
-                {
-                    "name": "HJKL for region jumps",
-                    "id": 3,
-                    "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "q or Q or Esc to quit app",
                     "id": 5,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
-                    "name": "tab to make a new one",
+                    "name": "'e' to make a new one",
                     "id": 11,
                     "subtasks": [
                         {
@@ -71,11 +65,23 @@
                     "name": "no click nor move to a prefilled cell",
                     "id": 18,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
+                },
+                {
+                    "name": "tab to cycle through cells",
+                    "id": 19,
+                    "timestamp": "07/11/2025",
+                    "state": "done"
+                },
+                {
+                    "name": "shift + tab to cycle through cells counterClockWise",
+                    "id": 20,
+                    "timestamp": "07/11/2025",
+                    "state": "done"
                 }
             ],
             "timestamp": "01/11/2025",
-            "state": "todo"
+            "state": "wip"
         },
         {
             "name": "view",
@@ -109,28 +115,34 @@
                     "name": "controls",
                     "id": 14,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "wip"
                 },
                 {
                     "name": "change matrix to green on success",
                     "id": 15,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "change matrix to red on last cell filled but sudoku wrong",
                     "id": 16,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
-                    "name": "bold text for premade values",
+                    "name": "bold and blue text for premade values",
                     "id": 17,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 }
             ],
             "timestamp": "01/11/2025",
+            "state": "wip"
+        },
+        {
+            "name": "cli flag to hide everything but the grid",
+            "id": 4,
+            "timestamp": "07/11/2025",
             "state": "todo"
         }
     ]
