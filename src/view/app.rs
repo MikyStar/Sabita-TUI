@@ -59,7 +59,7 @@ fn title<'a>() -> Paragraph<'a> {
 
 fn instructions<'a>() -> Paragraph<'a> {
     let text = String::from(
-        "Arrow keys/hjkl: Move | 1-9: Enter number | 0/Backspace: Clear | q/Esc: Close",
+        "Arrow keys/hjkl: Move | Tab/Shift+Tab: Circle | 1-9: Enter number | 0/Backspace: Clear | q/Esc: Close",
     );
 
     Paragraph::new(text)

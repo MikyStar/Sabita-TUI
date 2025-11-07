@@ -14,6 +14,7 @@ pub const BASE_MISSING_VALUES: u8 = 30;
 ////////////////////////////////////////
 
 pub struct State {
+    /////////////////
     // Public
     pub grid_to_solve: Grid,
     pub original_grid: Grid,
@@ -23,6 +24,10 @@ pub struct State {
 
     pub original_nb_missing_values: u8,
     pub remaining_nb_missing_values: u8,
+
+    pub is_solved: Option<bool>,
+
+    /////////////////
     // Private
     memoized_missing_box_locations: Vec<BoxLocation>,
 }
@@ -45,12 +50,16 @@ impl State {
 
             original_nb_missing_values: BASE_MISSING_VALUES,
             remaining_nb_missing_values: BASE_MISSING_VALUES,
+
+            is_solved: None,
+
             memoized_missing_box_locations,
         }
     }
 
     /////////////////
-    // Public
+
+    // Moving
 
     pub fn move_cell_left(&mut self) {
         for col_index in (0..self.cursor_col).rev() {
@@ -176,6 +185,8 @@ impl State {
         self.cursor_col = column;
     }
 
+    // Filling
+
     pub fn set_number(&mut self, num: u8) {
         if num >= 1 && num <= LENGTH_DIMENSION {
             let previous_value = self.grid_to_solve.values[self.cursor_row][self.cursor_col];
@@ -183,12 +194,12 @@ impl State {
 
             if previous_value == TO_BE_SOLVED {
                 self.remaining_nb_missing_values -= 1;
+            }
 
-                if self.remaining_nb_missing_values == 0 {
-                    match validate(&self.grid_to_solve.values) {
-                        Ok(_) => self.is_solved = Some(true),
-                        Err(_) => self.is_solved = Some(false),
-                    }
+            if self.remaining_nb_missing_values == 0 {
+                match validate(&self.grid_to_solve.values) {
+                    Ok(_) => self.is_solved = Some(true),
+                    Err(_) => self.is_solved = Some(false),
                 }
             }
         }
@@ -199,9 +210,10 @@ impl State {
         self.grid_to_solve.values[self.cursor_row][self.cursor_col] = original_value;
 
         self.remaining_nb_missing_values += 1;
+        self.is_solved = None;
     }
 
-    fn reset_state(&mut self) {
+    pub fn reset_state(&mut self) {
         let BoxLocation { line, column, .. } = self.memoized_missing_box_locations[0];
 
         self.grid_to_solve = self.original_grid.clone();
@@ -211,16 +223,6 @@ impl State {
 
         self.remaining_nb_missing_values = self.original_nb_missing_values;
 
-    }
-
-    /////////////////
-    // Private
-
-    pub fn move_cursor(&mut self, row_action: i32, column_action: i32) {
-        let new_row = (self.cursor_row as i32 + row_action).clamp(0, 8) as usize;
-        let new_col = (self.cursor_col as i32 + column_action).clamp(0, 8) as usize;
-
-        self.cursor_row = new_row;
-        self.cursor_col = new_col;
+        self.is_solved = None;
     }
 }

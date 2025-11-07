@@ -4,7 +4,7 @@ use ratatui::{
     widgets::{Block, Paragraph},
     Frame,
 };
-use sabita::core::constants::LENGTH_DIMENSION;
+use sabita::core::constants::{LENGTH_DIMENSION, TO_BE_SOLVED};
 
 use crate::core::state::{State, LENGTH_USIZE};
 
@@ -14,7 +14,9 @@ const DARK_CELL_BG: Color = Color::Black;
 const LIGHT_CELL_BG: Color = Color::Rgb(15, 15, 15);
 const SELECTED_CELL_BG: Color = Color::Rgb(30, 30, 30);
 
-const TEXT_TO_FILL_FG: Color = Color::Yellow;
+const TEXT_TO_FILL_WIP_FG: Color = Color::Yellow;
+const TEXT_TO_FILL_WRONG_FG: Color = Color::Red;
+const TEXT_TO_FILL_GOOD_FG: Color = Color::Green;
 const TEXT_STATIC_FG: Color = Color::White;
 
 ////////////////////////////////////////
@@ -52,7 +54,7 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
             let cell_value_original = state.original_grid.values[row][col];
 
             let mut text = String::from("-");
-            if cell_value_fillable != 0 {
+            if cell_value_fillable != TO_BE_SOLVED {
                 text = cell_value_fillable.to_string();
             }
 
@@ -62,8 +64,15 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
 
             // Text style
             let mut style = Style::default().fg(TEXT_STATIC_FG);
-            if cell_value_original == 0 {
-                style = style.fg(TEXT_TO_FILL_FG)
+            if cell_value_original == TO_BE_SOLVED {
+                if let Some(status) = state.is_solved {
+                    match status {
+                        true => style = style.fg(TEXT_TO_FILL_GOOD_FG),
+                        false => style = style.fg(TEXT_TO_FILL_WRONG_FG),
+                    }
+                } else {
+                    style = style.fg(TEXT_TO_FILL_WIP_FG)
+                }
             }
             if is_selected {
                 style = style.bg(SELECTED_CELL_BG).add_modifier(Modifier::BOLD);
