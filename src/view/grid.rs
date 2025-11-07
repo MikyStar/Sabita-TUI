@@ -1,7 +1,7 @@
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
-    widgets::Paragraph,
+    widgets::{Block, Paragraph},
     Frame,
 };
 use sabita::core::constants::LENGTH_DIMENSION;
@@ -75,11 +75,35 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
                 }
             }
 
+            // Create a block with the background style
+            let block = Block::default().style(style);
+
+            // Calculate the inner area for centering
+            let inner = block.inner(cols[col]);
+
+            // Render the block first
+            f.render_widget(block, cols[col]);
+
+            // Center the text vertically by calculating padding
+            let text_height = 1; // Single line of text
+            let available_height = inner.height;
+            let vertical_padding = (available_height.saturating_sub(text_height)) / 2;
+
+            // Create a new layout for vertical centering
+            let vertical_center = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([
+                    Constraint::Length(vertical_padding),
+                    Constraint::Length(text_height),
+                    Constraint::Min(0),
+                ])
+                .split(inner);
+
             let cell = Paragraph::new(text)
                 .style(style)
                 .alignment(Alignment::Center);
 
-            f.render_widget(cell, cols[col]);
+            f.render_widget(cell, vertical_center[1]);
         }
     }
 }

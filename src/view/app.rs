@@ -50,7 +50,7 @@ fn title<'a>() -> Paragraph<'a> {
     Paragraph::new(text)
         .style(
             Style::default()
-                .fg(Color::Cyan)
+                .fg(Color::DarkGray)
                 .add_modifier(Modifier::BOLD),
         )
         .alignment(Alignment::Center)
@@ -63,7 +63,7 @@ fn instructions<'a>() -> Paragraph<'a> {
     );
 
     Paragraph::new(text)
-        .style(Style::default().fg(Color::Gray))
+        .style(Style::default().fg(Color::DarkGray))
         .alignment(Alignment::Center)
         .block(Block::default().borders(Borders::ALL))
 }
