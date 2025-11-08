@@ -14,7 +14,7 @@ const DARK_CELL_BG: Color = Color::Black;
 const LIGHT_CELL_BG: Color = Color::Rgb(15, 15, 15);
 const SELECTED_CELL_BG: Color = Color::Rgb(30, 30, 30);
 
-const TEXT_TO_FILL_WIP_FG: Color = Color::Yellow;
+const TEXT_TO_FILL_WIP_FG: Color = Color::Blue;
 const TEXT_TO_FILL_WRONG_FG: Color = Color::Red;
 const TEXT_TO_FILL_GOOD_FG: Color = Color::Green;
 const TEXT_STATIC_FG: Color = Color::White;
@@ -73,9 +73,11 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
                 } else {
                     style = style.fg(TEXT_TO_FILL_WIP_FG)
                 }
+
+                style = style.add_modifier(Modifier::BOLD)
             }
             if is_selected {
-                style = style.bg(SELECTED_CELL_BG).add_modifier(Modifier::BOLD);
+                style = style.bg(SELECTED_CELL_BG);
             } else {
                 if !col_should_black {
                     style = style.bg(LIGHT_CELL_BG);

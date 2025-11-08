@@ -8,7 +8,7 @@ use std::io;
 
 use crate::{
     core::{events::handle_keyboard_events, state::State},
-    view::app::main_page,
+    view::app::render_app,
 };
 
 ////////////////////////////////////////
@@ -47,7 +47,7 @@ fn main_loop<B: ratatui::backend::Backend>(
     state: &mut State,
 ) -> io::Result<()> {
     loop {
-        terminal.draw(|f| main_page(f, state))?;
+        terminal.draw(|f| render_app(f, state))?;
 
         if handle_keyboard_events(state)? {
             return Ok(()); // Stop the loop

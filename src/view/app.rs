@@ -9,12 +9,12 @@ use sabita::core::constants::PKG_NAME as SABITA_PKG_NAME;
 
 use crate::{
     core::state::State,
-    view::{grid::render_grid, utils::center_rect},
+    view::{grid::render_grid, instructions::render_instructions, utils::center_rect},
 };
 
 ////////////////////////////////////////
 
-pub fn main_page(frame: &mut Frame, state: &State) {
+pub fn render_app(frame: &mut Frame, state: &State) {
     let size = frame.area();
 
     // Create main layout with padding
@@ -22,9 +22,9 @@ pub fn main_page(frame: &mut Frame, state: &State) {
         .direction(Direction::Vertical)
         .margin(2)
         .constraints([
-            Constraint::Length(3),
+            Constraint::Length(2),
             Constraint::Min(27),
-            Constraint::Length(3),
+            Constraint::Length(4),
         ])
         .split(size);
 
@@ -34,12 +34,10 @@ pub fn main_page(frame: &mut Frame, state: &State) {
     // Calculate grid area (centered and square-ish)
     let grid_area = center_rect(chunks[1], 60, 27);
 
-    // Render the grid
     render_grid(frame, state, grid_area);
 
-    // Instructions
-    let instructions = instructions();
-    frame.render_widget(instructions, chunks[2]);
+    render_instructions(frame, state, chunks[2]);
+    // frame.render_widget(instructions, chunks[2]);
 }
 
 ////////////////////
@@ -53,17 +51,6 @@ fn title<'a>() -> Paragraph<'a> {
                 .fg(Color::DarkGray)
                 .add_modifier(Modifier::BOLD),
         )
-        .alignment(Alignment::Center)
-        .block(Block::default().borders(Borders::ALL))
-}
-
-fn instructions<'a>() -> Paragraph<'a> {
-    let text = String::from(
-        "Arrow keys/hjkl: Move | Tab/Shift+Tab: Circle | 1-9: Enter number | 0/Backspace: Clear | q/Esc: Close",
-    );
-
-    Paragraph::new(text)
-        .style(Style::default().fg(Color::DarkGray))
         .alignment(Alignment::Center)
         .block(Block::default().borders(Borders::ALL))
 }
