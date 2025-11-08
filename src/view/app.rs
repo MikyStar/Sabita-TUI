@@ -22,9 +22,9 @@ pub fn render_app(frame: &mut Frame, state: &State) {
         .direction(Direction::Vertical)
         .margin(2)
         .constraints([
-            Constraint::Ratio(2, 35),
-            Constraint::Ratio(28, 35),
-            Constraint::Ratio(5, 35),
+            Constraint::Percentage(5),
+            Constraint::Percentage(80),
+            Constraint::Percentage(15),
         ])
         .split(size);
 

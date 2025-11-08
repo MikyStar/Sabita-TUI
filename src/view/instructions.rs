@@ -5,7 +5,10 @@ use ratatui::{
     Frame,
 };
 
-use crate::{core::state::State, view::grid::TEXT_TO_FILL_WRONG_FG};
+use crate::{
+    core::state::State,
+    view::grid::{TEXT_TO_FILL_GOOD_FG, TEXT_TO_FILL_WRONG_FG},
+};
 
 ////////////////////////////////////////
 
@@ -14,11 +17,8 @@ const TEXT_FG: Color = Color::DarkGray;
 ////////////////////////////////////////
 
 pub fn render_instructions(frame: &mut Frame, state: &State, area: Rect) {
-    let size = frame.area();
-
-    // Layout
-
     let nb_cols = 2;
+
     let cols = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(vec![Constraint::Ratio(1, nb_cols); nb_cols as usize])
@@ -28,10 +28,8 @@ pub fn render_instructions(frame: &mut Frame, state: &State, area: Rect) {
         panic!("Expected 2 columns");
     };
 
-    // Render
-
     render_left(frame, left, state);
-    moving(frame, right);
+    app(frame, right, state);
 }
 
 ////////////////////
@@ -57,7 +55,7 @@ fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
 ////////////////////
 
 fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
-    // TODO use state to put clear cell in red if wrong
+    let nb_rows = 2;
 
     // Main frame
 
@@ -66,7 +64,6 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(&block, area);
 
     let inner_block = block.inner(area);
-    let nb_rows = 2;
     let rows = Layout::default()
         .direction(Direction::Vertical)
         .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
@@ -80,7 +77,7 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(change_paragraph, rows[0]);
 
     // Clear
-    let clear_text = String::from("0 / Backspace → Clear");
+    let clear_text = String::from("0 / Backspace / Delete → Clear");
     let clear_style = if state.is_solved == Some(false) {
         Style::default().fg(TEXT_TO_FILL_WRONG_FG)
     } else {
@@ -94,13 +91,13 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
 
 fn moving<'a>(frame: &mut Frame, area: Rect) {
     // Main frame
+    let nb_rows = 2;
 
     let text = String::from("Moving");
     let block = Block::new().borders(Borders::ALL).title(text);
     frame.render_widget(&block, area);
 
     let inner_block = block.inner(area);
-    let nb_rows = 2;
     let rows = Layout::default()
         .direction(Direction::Vertical)
         .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
@@ -121,6 +118,50 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
     frame.render_widget(cycle_paragraph, rows[1]);
 }
 
-// fn app<'a>(state: State) {
-//     // use state to put new game in green if done
-// }
+fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
+    // Main frame
+    let nb_rows = 4;
+
+    let text = String::from("App");
+    let block = Block::new().borders(Borders::ALL).title(text);
+    frame.render_widget(&block, area);
+
+    let inner_block = block.inner(area);
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
+        .split(inner_block);
+
+    // New game
+    let new_grid_text = String::from("e → New grid");
+    let new_grid_style = if state.is_solved == Some(true) {
+        Style::default().fg(TEXT_TO_FILL_GOOD_FG)
+    } else {
+        Style::default().fg(TEXT_FG)
+    };
+    let new_grid_paragraph = Paragraph::new(new_grid_text)
+        .style(new_grid_style)
+        .alignment(Alignment::Left);
+    frame.render_widget(new_grid_paragraph, rows[0]);
+
+    // Reset
+    let reset_text = String::from("r → Reset grid");
+    let reset_paragraph = Paragraph::new(reset_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(reset_paragraph, rows[1]);
+
+    // Solve
+    let solve_text = String::from("s → Solve grid");
+    let solve_paragraph = Paragraph::new(solve_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(solve_paragraph, rows[2]);
+
+    // Quit
+    let quit_text = String::from("q / Esc → Quit app");
+    let quit_paragraph = Paragraph::new(quit_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(quit_paragraph, rows[3]);
+}
