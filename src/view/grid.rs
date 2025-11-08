@@ -15,8 +15,8 @@ const LIGHT_CELL_BG: Color = Color::Rgb(15, 15, 15);
 const SELECTED_CELL_BG: Color = Color::Rgb(30, 30, 30);
 
 const TEXT_TO_FILL_WIP_FG: Color = Color::Blue;
-const TEXT_TO_FILL_WRONG_FG: Color = Color::Red;
-const TEXT_TO_FILL_GOOD_FG: Color = Color::Green;
+pub const TEXT_TO_FILL_WRONG_FG: Color = Color::Red;
+pub const TEXT_TO_FILL_GOOD_FG: Color = Color::Green;
 const TEXT_STATIC_FG: Color = Color::White;
 
 ////////////////////////////////////////

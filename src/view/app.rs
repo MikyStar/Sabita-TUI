@@ -22,9 +22,9 @@ pub fn render_app(frame: &mut Frame, state: &State) {
         .direction(Direction::Vertical)
         .margin(2)
         .constraints([
-            Constraint::Length(2),
-            Constraint::Min(27),
-            Constraint::Length(4),
+            Constraint::Ratio(2, 35),
+            Constraint::Ratio(28, 35),
+            Constraint::Ratio(5, 35),
         ])
         .split(size);
 
@@ -33,11 +33,9 @@ pub fn render_app(frame: &mut Frame, state: &State) {
 
     // Calculate grid area (centered and square-ish)
     let grid_area = center_rect(chunks[1], 60, 27);
-
     render_grid(frame, state, grid_area);
 
     render_instructions(frame, state, chunks[2]);
-    // frame.render_widget(instructions, chunks[2]);
 }
 
 ////////////////////
