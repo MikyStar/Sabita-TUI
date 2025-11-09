@@ -53,7 +53,7 @@
                         }
                     ],
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "+ for increase difficulty ; - for decrease",
@@ -103,7 +103,7 @@
                     "name": "timer for current sudoku",
                     "id": 8,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "timer for current session if more than one sudoku",
@@ -115,13 +115,13 @@
                     "name": "difficulty",
                     "id": 10,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "controls",
                     "id": 14,
                     "timestamp": "01/11/2025",
-                    "state": "wip"
+                    "state": "done"
                 },
                 {
                     "name": "change matrix to green on success",

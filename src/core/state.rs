@@ -262,4 +262,8 @@ impl State {
             *self = State::new(Some(next_difficulty));
         }
     }
+
+    pub fn new_from_same_difficulty(&mut self) {
+        *self = State::new(Some(self.difficulty));
+    }
 }

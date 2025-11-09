@@ -30,6 +30,7 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
             KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
 
             // App
+            KeyCode::Char('n') => state.new_from_same_difficulty(),
             KeyCode::Char('r') => state.reset(),
             KeyCode::Char('+') => state.increase_difficulty(),
             KeyCode::Char('-') => state.decrease_difficulty(),
