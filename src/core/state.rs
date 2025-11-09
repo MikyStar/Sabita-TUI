@@ -20,6 +20,7 @@ pub struct State {
     // Public
     pub grid_to_solve: Grid,
     pub original_grid: Grid,
+    pub full_grid: Grid,
 
     pub cursor_row: usize,
     pub cursor_col: usize,
@@ -30,6 +31,7 @@ pub struct State {
     pub is_solved: Option<bool>,
 
     pub start: Instant,
+    pub solved_at: Option<Instant>,
 
     pub difficulty: DIFFICULTY,
 
@@ -49,7 +51,10 @@ impl State {
         let difficulty = difficulty.unwrap_or(BASE_DIFFICULTY);
         let nb_missing_cells: u8 = difficulty.get_missing_cell_nb();
 
-        let grid = Grid::generate(Some(nb_missing_cells));
+        let full_grid = Grid::generate(None);
+
+        let mut grid = full_grid.clone();
+        grid.remove_random_values(nb_missing_cells);
 
         let memoized_missing_box_locations = grid.locate_missing_box();
         let BoxLocation { line, column, .. } = memoized_missing_box_locations[0];
@@ -57,6 +62,7 @@ impl State {
         State {
             grid_to_solve: grid.clone(),
             original_grid: grid.clone(),
+            full_grid,
 
             cursor_row: line,
             cursor_col: column,
@@ -67,6 +73,7 @@ impl State {
             is_solved: None,
 
             start: Instant::now(),
+            solved_at: None,
 
             difficulty,
 
@@ -219,7 +226,10 @@ impl State {
 
             if self.remaining_nb_missing_values == 0 {
                 match validate(&self.grid_to_solve.values) {
-                    Ok(_) => self.is_solved = Some(true),
+                    Ok(_) => {
+                        self.is_solved = Some(true);
+                        self.solved_at = Some(Instant::now());
+                    }
                     Err(_) => self.is_solved = Some(false),
                 }
             }
@@ -273,5 +283,15 @@ impl State {
 
     pub fn toggle_zen_mode(&mut self) {
         self.is_zen_mode = !self.is_zen_mode;
+    }
+
+    pub fn solve(&mut self) {
+        if self.is_solved.is_some() {
+            return;
+        }
+
+        self.grid_to_solve = self.full_grid.clone();
+        self.is_solved = Some(true);
+        self.solved_at = Some(Instant::now());
     }
 }

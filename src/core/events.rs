@@ -34,6 +34,7 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
             KeyCode::Char('r') => state.reset(),
             KeyCode::Char('+') => state.increase_difficulty(),
             KeyCode::Char('-') => state.decrease_difficulty(),
+            KeyCode::Char('s') => state.solve(),
             KeyCode::Char('z') => state.toggle_zen_mode(),
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}

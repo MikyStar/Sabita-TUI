@@ -50,7 +50,12 @@ fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
         .split(inner_block);
 
     // Timer
-    let time = seconds_to_hr(state.start.elapsed());
+    let time = if let Some(end) = state.solved_at {
+        let diff = end - state.start;
+        seconds_to_hr(diff)
+    } else {
+        seconds_to_hr(state.start.elapsed())
+    };
     let timer_text = format!("Elapsed → {time}");
     let timer_paragraph = Paragraph::new(timer_text)
         .style(Style::default().fg(TEXT_FG))
