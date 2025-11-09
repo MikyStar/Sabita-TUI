@@ -38,7 +38,7 @@ pub fn render_app(frame: &mut Frame, state: &State) {
     let grid_area = center_rect(center, grid_dimension, grid_dimension);
     render_grid(frame, state, grid_area);
 
-    render_instructions(frame, state, bottom);
+    render_instructions(frame, bottom, state);
 }
 
 ////////////////////

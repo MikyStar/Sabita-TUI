@@ -16,7 +16,63 @@ const TEXT_FG: Color = Color::DarkGray;
 
 ////////////////////////////////////////
 
-pub fn render_instructions(frame: &mut Frame, state: &State, area: Rect) {
+pub fn render_instructions(frame: &mut Frame, area: Rect, state: &State) {
+    // Layout
+
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(25), Constraint::Percentage(75)])
+        .split(area);
+    let [top, bottom] = *rows else {
+        panic!("Expected 2 rows");
+    };
+
+    // Render
+
+    infos(frame, top, state);
+    controls(frame, bottom, state);
+}
+
+////////////////////
+
+fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
+    // Main frame
+    let nb_cols = 3;
+
+    let text = String::from("Infos");
+    let block = Block::new().borders(Borders::ALL).title(text);
+    frame.render_widget(&block, area);
+
+    let inner_block = block.inner(area);
+    let rows = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(vec![Constraint::Ratio(1, nb_cols); nb_cols as usize])
+        .split(inner_block);
+
+    // Timer
+    let time = seconds_to_hr(state.start.elapsed());
+    let timer_text = format!("Elapsed → {time}");
+    let timer_paragraph = Paragraph::new(timer_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Center);
+    frame.render_widget(timer_paragraph, rows[0]);
+
+    // Difficulty
+    let difficulty_text = format!("Level → {}", state.difficulty);
+    let difficulty_paragraph = Paragraph::new(difficulty_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Center);
+    frame.render_widget(difficulty_paragraph, rows[1]);
+
+    // Streak
+    let streak_text = format!("Streak → {}", state.streak);
+    let streak_paragraph = Paragraph::new(streak_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Center);
+    frame.render_widget(streak_paragraph, rows[2]);
+}
+
+pub fn controls(frame: &mut Frame, area: Rect, state: &State) {
     let nb_cols = 2;
 
     let cols = Layout::default()
@@ -29,10 +85,8 @@ pub fn render_instructions(frame: &mut Frame, state: &State, area: Rect) {
     };
 
     render_left(frame, left, state);
-    render_right(frame, right, state);
+    app(frame, right, state);
 }
-
-////////////////////
 
 fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
     // Layout
@@ -51,26 +105,6 @@ fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
     filling(frame, top, state);
     moving(frame, bottom);
 }
-
-fn render_right<'a>(frame: &mut Frame, area: Rect, state: &State) {
-    // Layout
-
-    let nb_rows = 2;
-    let rows = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
-        .split(area);
-    let [top, bottom] = *rows else {
-        panic!("Expected 2 rows");
-    };
-
-    // Render
-
-    infos(frame, top, state);
-    app(frame, bottom, state);
-}
-
-////////////////////
 
 fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
     let nb_rows = 2;
@@ -136,39 +170,9 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
     frame.render_widget(cycle_paragraph, rows[1]);
 }
 
-fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
-    // Main frame
-    let nb_rows = 2;
-
-    let text = String::from("Infos");
-    let block = Block::new().borders(Borders::ALL).title(text);
-    frame.render_widget(&block, area);
-
-    let inner_block = block.inner(area);
-    let rows = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
-        .split(inner_block);
-
-    // Timer
-    let time = seconds_to_hr(state.start.elapsed());
-    let timer_text = format!("Elapsed → {time}");
-    let timer_paragraph = Paragraph::new(timer_text)
-        .style(Style::default().fg(TEXT_FG))
-        .alignment(Alignment::Left);
-    frame.render_widget(timer_paragraph, rows[0]);
-
-    // Difficulty
-    let difficulty_text = format!("Level → {}", state.difficulty);
-    let difficulty_paragraph = Paragraph::new(difficulty_text)
-        .style(Style::default().fg(TEXT_FG))
-        .alignment(Alignment::Left);
-    frame.render_widget(difficulty_paragraph, rows[1]);
-}
-
 fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
     // Main frame
-    let nb_rows = 4;
+    let nb_rows = 6;
 
     let text = String::from("App");
     let block = Block::new().borders(Borders::ALL).title(text);
@@ -181,7 +185,7 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
         .split(inner_block);
 
     // New game
-    let new_grid_text = String::from("e → New grid");
+    let new_grid_text = String::from("n → New grid");
     let new_grid_style = if state.is_solved == Some(true) {
         Style::default().fg(TEXT_TO_FILL_GOOD_FG)
     } else {
@@ -206,10 +210,24 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
         .alignment(Alignment::Left);
     frame.render_widget(solve_paragraph, rows[2]);
 
+    // Difficulty
+    let difficulty_text = String::from("+ / - → Change difficulty");
+    let difficulty_paragraph = Paragraph::new(difficulty_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(difficulty_paragraph, rows[3]);
+
+    // Zen
+    let zen_text = String::from("z → Toggle zen mode");
+    let zen_paragraph = Paragraph::new(zen_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(zen_paragraph, rows[4]);
+
     // Quit
     let quit_text = String::from("q / Esc → Quit app");
     let quit_paragraph = Paragraph::new(quit_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
-    frame.render_widget(quit_paragraph, rows[3]);
+    frame.render_widget(quit_paragraph, rows[5]);
 }

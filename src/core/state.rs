@@ -33,6 +33,8 @@ pub struct State {
 
     pub difficulty: DIFFICULTY,
 
+    pub streak: u8,
+
     /////////////////
     // Private
     memoized_missing_box_locations: Vec<BoxLocation>,
@@ -62,6 +64,8 @@ impl State {
             start: Instant::now(),
 
             difficulty: DIFFICULTY::One,
+
+            streak: 0,
 
             memoized_missing_box_locations,
         }
