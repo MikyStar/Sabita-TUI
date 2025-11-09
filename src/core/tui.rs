@@ -1,10 +1,10 @@
 use crossterm::{
-    event::{DisableMouseCapture, EnableMouseCapture},
+    event::{poll, DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
-use std::io;
+use std::{io, time::Duration};
 
 use crate::{
     core::{events::handle_keyboard_events, state::State},
@@ -49,8 +49,10 @@ fn main_loop<B: ratatui::backend::Backend>(
     loop {
         terminal.draw(|f| render_app(f, state))?;
 
-        if handle_keyboard_events(state)? {
-            return Ok(()); // Stop the loop
+        if poll(Duration::from_secs(1))? {
+            if handle_keyboard_events(state)? {
+                return Ok(());
+            }
         }
     }
 }
