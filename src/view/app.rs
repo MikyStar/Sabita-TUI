@@ -17,28 +17,42 @@ use crate::{
 pub fn render_app(frame: &mut Frame, state: &State) {
     let size = frame.area();
 
+    let constraints = if state.is_zen_mode {
+        [
+            Constraint::Percentage(0),
+            Constraint::Percentage(100),
+            Constraint::Percentage(0),
+        ]
+    } else {
+        [
+            Constraint::Percentage(5),
+            Constraint::Percentage(75),
+            Constraint::Percentage(20),
+        ]
+    };
+
     // Create main layout with padding
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(2)
-        .constraints([
-            Constraint::Percentage(5),
-            Constraint::Percentage(75),
-            Constraint::Percentage(20),
-        ])
+        .constraints(constraints)
         .split(size);
     let [top, center, bottom] = *chunks else {
         panic!("Expected 3 rows");
     };
-
-    let title = title();
-    frame.render_widget(title, top);
-
     let grid_dimension = center.width;
     let grid_area = center_rect(center, grid_dimension, grid_dimension);
-    render_grid(frame, state, grid_area);
 
-    render_instructions(frame, bottom, state);
+    if state.is_zen_mode {
+        render_grid(frame, state, grid_area);
+    } else {
+        let title = title();
+        frame.render_widget(title, top);
+
+        render_grid(frame, state, grid_area);
+
+        render_instructions(frame, bottom, state);
+    }
 }
 
 ////////////////////

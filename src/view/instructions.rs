@@ -1,6 +1,6 @@
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
+    style::{Color, Style},
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
@@ -218,7 +218,7 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(difficulty_paragraph, rows[3]);
 
     // Zen
-    let zen_text = String::from("z → Toggle zen mode");
+    let zen_text = String::from("f → Toggle fullscreen");
     let zen_paragraph = Paragraph::new(zen_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);

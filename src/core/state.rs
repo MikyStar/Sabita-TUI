@@ -35,6 +35,8 @@ pub struct State {
 
     pub streak: u8,
 
+    pub is_zen_mode: bool,
+
     /////////////////
     // Private
     memoized_missing_box_locations: Vec<BoxLocation>,
@@ -69,6 +71,8 @@ impl State {
             difficulty,
 
             streak: 0,
+
+            is_zen_mode: false,
 
             memoized_missing_box_locations,
         }
@@ -265,5 +269,9 @@ impl State {
 
     pub fn new_from_same_difficulty(&mut self) {
         *self = State::new(Some(self.difficulty));
+    }
+
+    pub fn toggle_zen_mode(&mut self) {
+        self.is_zen_mode = !self.is_zen_mode;
     }
 }
