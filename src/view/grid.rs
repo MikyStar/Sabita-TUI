@@ -29,6 +29,7 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
             Constraint::Ratio(1, LENGTH_DIMENSION.into());
             LENGTH_DIMENSION.into()
         ])
+        .margin(2)
         .split(area);
 
     let mut col_should_black = true;

@@ -6,7 +6,7 @@ use ratatui::{
 };
 
 use crate::{
-    core::state::State,
+    core::{state::State, time::seconds_to_hr},
     view::grid::{TEXT_TO_FILL_GOOD_FG, TEXT_TO_FILL_WRONG_FG},
 };
 
@@ -29,7 +29,7 @@ pub fn render_instructions(frame: &mut Frame, state: &State, area: Rect) {
     };
 
     render_left(frame, left, state);
-    app(frame, right, state);
+    render_right(frame, right, state);
 }
 
 ////////////////////
@@ -50,6 +50,24 @@ fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
 
     filling(frame, top, state);
     moving(frame, bottom);
+}
+
+fn render_right<'a>(frame: &mut Frame, area: Rect, state: &State) {
+    // Layout
+
+    let nb_rows = 2;
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
+        .split(area);
+    let [top, bottom] = *rows else {
+        panic!("Expected 2 rows");
+    };
+
+    // Render
+
+    infos(frame, top, state);
+    app(frame, bottom, state);
 }
 
 ////////////////////
@@ -116,6 +134,36 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(cycle_paragraph, rows[1]);
+}
+
+fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
+    // Main frame
+    let nb_rows = 2;
+
+    let text = String::from("Infos");
+    let block = Block::new().borders(Borders::ALL).title(text);
+    frame.render_widget(&block, area);
+
+    let inner_block = block.inner(area);
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![Constraint::Ratio(1, nb_rows); nb_rows as usize])
+        .split(inner_block);
+
+    // Timer
+    let time = seconds_to_hr(state.start.elapsed());
+    let timer_text = format!("Elapsed → {time}");
+    let timer_paragraph = Paragraph::new(timer_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(timer_paragraph, rows[0]);
+
+    // Difficulty
+    let difficulty_text = format!("Level → {}", state.difficulty);
+    let difficulty_paragraph = Paragraph::new(difficulty_text)
+        .style(Style::default().fg(TEXT_FG))
+        .alignment(Alignment::Left);
+    frame.render_widget(difficulty_paragraph, rows[1]);
 }
 
 fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {

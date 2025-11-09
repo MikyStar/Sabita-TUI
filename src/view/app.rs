@@ -23,19 +23,22 @@ pub fn render_app(frame: &mut Frame, state: &State) {
         .margin(2)
         .constraints([
             Constraint::Percentage(5),
-            Constraint::Percentage(80),
-            Constraint::Percentage(15),
+            Constraint::Percentage(75),
+            Constraint::Percentage(20),
         ])
         .split(size);
+    let [top, center, bottom] = *chunks else {
+        panic!("Expected 3 rows");
+    };
 
     let title = title();
-    frame.render_widget(title, chunks[0]);
+    frame.render_widget(title, top);
 
-    // Calculate grid area (centered and square-ish)
-    let grid_area = center_rect(chunks[1], 60, 27);
+    let grid_dimension = center.width;
+    let grid_area = center_rect(center, grid_dimension, grid_dimension);
     render_grid(frame, state, grid_area);
 
-    render_instructions(frame, state, chunks[2]);
+    render_instructions(frame, state, bottom);
 }
 
 ////////////////////

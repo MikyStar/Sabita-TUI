@@ -1,10 +1,12 @@
-use std::usize;
+use std::{time::Instant, usize};
 
 use sabita::core::{
     constants::{LENGTH_DIMENSION, TO_BE_SOLVED},
     grid::{BoxLocation, Grid},
     validation::validate,
 };
+
+use crate::core::difficulty::DIFFICULTY;
 
 ////////////////////////////////////////
 
@@ -27,6 +29,10 @@ pub struct State {
 
     pub is_solved: Option<bool>,
 
+    pub start: Instant,
+
+    pub difficulty: DIFFICULTY,
+
     /////////////////
     // Private
     memoized_missing_box_locations: Vec<BoxLocation>,
@@ -36,7 +42,7 @@ pub struct State {
 
 impl State {
     pub fn new() -> State {
-        let grid = Grid::generate(Some(BASE_MISSING_VALUES));
+        let grid = Grid::generate(Some(BASE_MISSING_VALUES)); // TODO link to difficulty
 
         let memoized_missing_box_locations = grid.locate_missing_box();
         let BoxLocation { line, column, .. } = memoized_missing_box_locations[0];
@@ -52,6 +58,10 @@ impl State {
             remaining_nb_missing_values: BASE_MISSING_VALUES,
 
             is_solved: None,
+
+            start: Instant::now(),
+
+            difficulty: DIFFICULTY::One,
 
             memoized_missing_box_locations,
         }
