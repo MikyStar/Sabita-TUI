@@ -59,7 +59,7 @@
                     "name": "+ for increase difficulty ; - for decrease",
                     "id": 13,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "no click nor move to a prefilled cell",

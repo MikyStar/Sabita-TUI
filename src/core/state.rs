@@ -6,12 +6,12 @@ use sabita::core::{
     validation::validate,
 };
 
-use crate::core::difficulty::DIFFICULTY;
+use crate::core::difficulty::{DIFFICULTY, MAX_DIFFICULTY_INDEX};
 
 ////////////////////////////////////////
 
 pub const LENGTH_USIZE: usize = LENGTH_DIMENSION as usize;
-pub const BASE_MISSING_VALUES: u8 = 30;
+pub const BASE_DIFFICULTY: DIFFICULTY = DIFFICULTY::One;
 
 ////////////////////////////////////////
 
@@ -43,8 +43,11 @@ pub struct State {
 /////////////////
 
 impl State {
-    pub fn new() -> State {
-        let grid = Grid::generate(Some(BASE_MISSING_VALUES)); // TODO link to difficulty
+    pub fn new(difficulty: Option<DIFFICULTY>) -> State {
+        let difficulty = difficulty.unwrap_or(BASE_DIFFICULTY);
+        let nb_missing_cells: u8 = difficulty.get_missing_cell_nb();
+
+        let grid = Grid::generate(Some(nb_missing_cells));
 
         let memoized_missing_box_locations = grid.locate_missing_box();
         let BoxLocation { line, column, .. } = memoized_missing_box_locations[0];
@@ -56,14 +59,14 @@ impl State {
             cursor_row: line,
             cursor_col: column,
 
-            original_nb_missing_values: BASE_MISSING_VALUES,
-            remaining_nb_missing_values: BASE_MISSING_VALUES,
+            original_nb_missing_values: nb_missing_cells,
+            remaining_nb_missing_values: nb_missing_cells,
 
             is_solved: None,
 
             start: Instant::now(),
 
-            difficulty: DIFFICULTY::One,
+            difficulty,
 
             streak: 0,
 
@@ -227,6 +230,8 @@ impl State {
         self.is_solved = None;
     }
 
+    // App controls
+
     pub fn reset(&mut self) {
         let BoxLocation { line, column, .. } = self.memoized_missing_box_locations[0];
 
@@ -238,5 +243,23 @@ impl State {
         self.remaining_nb_missing_values = self.original_nb_missing_values;
 
         self.is_solved = None;
+    }
+
+    pub fn increase_difficulty(&mut self) {
+        let current_difficulty_index: usize = self.difficulty.into();
+
+        if current_difficulty_index < MAX_DIFFICULTY_INDEX {
+            let next_difficulty = DIFFICULTY::try_from(current_difficulty_index + 1).unwrap();
+            *self = State::new(Some(next_difficulty));
+        }
+    }
+
+    pub fn decrease_difficulty(&mut self) {
+        let current_difficulty_index: usize = self.difficulty.into();
+
+        if current_difficulty_index > 0 {
+            let next_difficulty = DIFFICULTY::try_from(current_difficulty_index - 1).unwrap();
+            *self = State::new(Some(next_difficulty));
+        }
     }
 }

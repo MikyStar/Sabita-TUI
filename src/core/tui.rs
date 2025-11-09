@@ -21,7 +21,7 @@ pub fn run_tui() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut state = State::new();
+    let mut state = State::new(None);
     let res = main_loop(&mut terminal, &mut state);
 
     // Restore terminal

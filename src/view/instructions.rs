@@ -58,7 +58,7 @@ fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(timer_paragraph, rows[0]);
 
     // Difficulty
-    let difficulty_text = format!("Level → {}", state.difficulty);
+    let difficulty_text = format!("Difficulty → {}", state.difficulty);
     let difficulty_paragraph = Paragraph::new(difficulty_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Center);
