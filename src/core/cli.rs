@@ -70,23 +70,21 @@ pub fn parse_args() -> Args {
     let full_screen = full_screen_regex.is_match(&cli_phrase).then_some(true);
 
     let difficulty_level_regex = Regex::new(r"(^|\s)(?:--difficulty|-d)=([1-5])($|\s)").unwrap();
-    let difficulty_level = difficulty_level_regex
-        .captures(&cli_phrase)
-        .and_then(|caps| {
-            let level = caps[2].parse::<u8>().unwrap();
+    let difficulty_level = difficulty_level_regex.captures(&cli_phrase).map(|caps| {
+        let level = caps[2].parse::<u8>().unwrap();
 
-            Some(DIFFICULTY::from(level - 1))
-        });
+        DIFFICULTY::from(level - 1)
+    });
 
     println!("{:?}", difficulty_level_regex.captures(&cli_phrase));
 
-    return Args {
+    Args {
         action: ACTION::RunUi,
         state_param: StateParam {
             difficulty_level,
             full_screen,
         },
-    };
+    }
 }
 
 ////////////////////

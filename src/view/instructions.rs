@@ -51,7 +51,7 @@ pub fn render_instructions(frame: &mut Frame, area: Rect, state: &State) {
 
 ////////////////////
 
-fn infos<'a>(frame: &mut Frame, area: Rect, state: &State) {
+fn infos(frame: &mut Frame, area: Rect, state: &State) {
     // Main frame
     let nb_cols = 3;
 
@@ -109,7 +109,7 @@ pub fn controls(frame: &mut Frame, area: Rect, state: &State) {
     app(frame, right, state);
 }
 
-fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
+fn render_left(frame: &mut Frame, area: Rect, state: &State) {
     // Layout
 
     let nb_rows = 2;
@@ -127,7 +127,7 @@ fn render_left<'a>(frame: &mut Frame, area: Rect, state: &State) {
     moving(frame, bottom);
 }
 
-fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
+fn filling(frame: &mut Frame, area: Rect, state: &State) {
     let nb_rows = 2;
 
     // Main frame
@@ -162,7 +162,7 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(clear_paragraph, rows[1]);
 }
 
-fn moving<'a>(frame: &mut Frame, area: Rect) {
+fn moving(frame: &mut Frame, area: Rect) {
     // Main frame
     let nb_rows = 2;
 
@@ -191,7 +191,7 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
     frame.render_widget(cycle_paragraph, rows[1]);
 }
 
-fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
+fn app(frame: &mut Frame, area: Rect, state: &State) {
     // Main frame
     let nb_rows = 6;
 

@@ -1,5 +1,4 @@
 use core::fmt;
-use std::usize;
 
 use sabita::core::constants::{LENGTH_DIMENSION, MINIMUM_PROVIDED};
 
@@ -29,15 +28,15 @@ impl fmt::Display for DIFFICULTY {
         let filled = FULL_STAR.repeat(nb_filled);
 
         let remaining_nb = (MAX_DIFFICULTY_INDEX + 1) - nb_filled;
-        let remaining_text = EMPTY_STAR.repeat(remaining_nb.into());
+        let remaining_text = EMPTY_STAR.repeat(remaining_nb);
 
         write!(f, "{filled}{remaining_text}")
     }
 }
 
-impl Into<usize> for DIFFICULTY {
-    fn into(self) -> usize {
-        self as usize
+impl From<DIFFICULTY> for usize {
+    fn from(val: DIFFICULTY) -> Self {
+        val as usize
     }
 }
 

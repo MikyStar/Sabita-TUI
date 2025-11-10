@@ -1,4 +1,4 @@
-use std::{time::Instant, usize};
+use std::time::Instant;
 
 use sabita::core::{
     constants::{LENGTH_DIMENSION, TO_BE_SOLVED},
@@ -216,7 +216,7 @@ impl State {
     // Filling
 
     pub fn set_number(&mut self, num: u8) {
-        if num >= 1 && num <= LENGTH_DIMENSION {
+        if (1..=LENGTH_DIMENSION).contains(&num) {
             let previous_value = self.grid_to_solve.values[self.cursor_row][self.cursor_col];
             self.grid_to_solve.values[self.cursor_row][self.cursor_col] = num;
 
@@ -263,7 +263,7 @@ impl State {
         let current_difficulty_index: usize = self.difficulty.into();
 
         if current_difficulty_index < MAX_DIFFICULTY_INDEX {
-            let next_difficulty = DIFFICULTY::try_from(current_difficulty_index + 1).unwrap();
+            let next_difficulty = DIFFICULTY::from(current_difficulty_index + 1);
             *self = State::new(Some(next_difficulty), self.is_fullscreen);
         }
     }
@@ -272,7 +272,7 @@ impl State {
         let current_difficulty_index: usize = self.difficulty.into();
 
         if current_difficulty_index > 0 {
-            let next_difficulty = DIFFICULTY::try_from(current_difficulty_index - 1).unwrap();
+            let next_difficulty = DIFFICULTY::from(current_difficulty_index - 1);
             *self = State::new(Some(next_difficulty), self.is_fullscreen);
         }
     }

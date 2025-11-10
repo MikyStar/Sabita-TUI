@@ -77,14 +77,13 @@ pub fn render_grid(f: &mut Frame, state: &State, area: Rect) {
 
                 style = style.add_modifier(Modifier::BOLD)
             }
+
             if is_selected {
                 style = style.bg(SELECTED_CELL_BG);
+            } else if !col_should_black {
+                style = style.bg(LIGHT_CELL_BG);
             } else {
-                if !col_should_black {
-                    style = style.bg(LIGHT_CELL_BG);
-                } else {
-                    style = style.bg(DARK_CELL_BG);
-                }
+                style = style.bg(DARK_CELL_BG);
             }
 
             // Create a block with the background style
