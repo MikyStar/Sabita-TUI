@@ -7,13 +7,13 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 use std::{io, time::Duration};
 
 use crate::{
-    core::{events::handle_keyboard_events, state::State},
+    core::{difficulty::DIFFICULTY, events::handle_keyboard_events, state::State},
     view::app::render_app,
 };
 
 ////////////////////////////////////////
 
-pub fn run_tui() -> Result<(), io::Error> {
+pub fn run_tui(difficulty: Option<DIFFICULTY>, is_full_screen: bool) -> Result<(), io::Error> {
     // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -21,7 +21,7 @@ pub fn run_tui() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut state = State::new(None);
+    let mut state = State::new(difficulty, is_full_screen);
     let res = main_loop(&mut terminal, &mut state);
 
     // Restore terminal

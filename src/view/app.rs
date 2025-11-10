@@ -17,7 +17,7 @@ use crate::{
 pub fn render_app(frame: &mut Frame, state: &State) {
     let size = frame.area();
 
-    let constraints = if state.is_zen_mode {
+    let constraints = if state.is_fullscreen {
         [
             Constraint::Percentage(0),
             Constraint::Percentage(100),
@@ -43,7 +43,7 @@ pub fn render_app(frame: &mut Frame, state: &State) {
     let grid_dimension = center.width;
     let grid_area = center_rect(center, grid_dimension, grid_dimension);
 
-    if state.is_zen_mode {
+    if state.is_fullscreen {
         render_grid(frame, state, grid_area);
     } else {
         let title = title();

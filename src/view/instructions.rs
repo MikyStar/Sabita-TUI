@@ -14,6 +14,22 @@ use crate::{
 
 const TEXT_FG: Color = Color::DarkGray;
 
+pub const FILLING: &str = "Filling values";
+pub const CHANGE_VALUE: &str = "1-9 → Change";
+pub const CLEAR_VALUE: &str = "0 / Backspace / Delete → Clear";
+
+pub const MOVING: &str = "Moving";
+pub const MOVE: &str = "Arrow keys / hjkl → Move";
+pub const CYCLE: &str = "Tab / Shift+Tab → Cycle";
+
+pub const APP: &str = "App";
+pub const NEW: &str = "n → New grid";
+pub const RESET: &str = "r → Reset grid";
+pub const SOLVE: &str = "s → Solve grid";
+pub const CHANGE_DIFFICULTY: &str = "+ / - → Change difficulty";
+pub const FULLSCREEN: &str = "f → Toggle fullscreen";
+pub const ESCAPE: &str = "q / Esc → Quit app";
+
 ////////////////////////////////////////
 
 pub fn render_instructions(frame: &mut Frame, area: Rect, state: &State) {
@@ -116,7 +132,7 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
 
     // Main frame
 
-    let text = String::from("Filling values");
+    let text = String::from(FILLING);
     let block = Block::new().borders(Borders::ALL).title(text);
     frame.render_widget(&block, area);
 
@@ -127,14 +143,14 @@ fn filling<'a>(frame: &mut Frame, area: Rect, state: &State) {
         .split(inner_block);
 
     // Change
-    let change_text = String::from("1-9 → Change");
+    let change_text = String::from(CHANGE_VALUE);
     let change_paragraph = Paragraph::new(change_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(change_paragraph, rows[0]);
 
     // Clear
-    let clear_text = String::from("0 / Backspace / Delete → Clear");
+    let clear_text = String::from(CLEAR_VALUE);
     let clear_style = if state.is_solved == Some(false) {
         Style::default().fg(TEXT_TO_FILL_WRONG_FG)
     } else {
@@ -150,7 +166,7 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
     // Main frame
     let nb_rows = 2;
 
-    let text = String::from("Moving");
+    let text = String::from(MOVING);
     let block = Block::new().borders(Borders::ALL).title(text);
     frame.render_widget(&block, area);
 
@@ -161,14 +177,14 @@ fn moving<'a>(frame: &mut Frame, area: Rect) {
         .split(inner_block);
 
     // Directions
-    let directions_text = String::from("Arrow keys / hjkl → Move");
+    let directions_text = String::from(MOVE);
     let directions_paragraph = Paragraph::new(directions_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(directions_paragraph, rows[0]);
 
     // Cycle
-    let cycle_text = String::from("Tab / Shift+Tab → Cycle");
+    let cycle_text = String::from(CYCLE);
     let cycle_paragraph = Paragraph::new(cycle_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
@@ -179,7 +195,7 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
     // Main frame
     let nb_rows = 6;
 
-    let text = String::from("App");
+    let text = String::from(APP);
     let block = Block::new().borders(Borders::ALL).title(text);
     frame.render_widget(&block, area);
 
@@ -190,7 +206,7 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
         .split(inner_block);
 
     // New game
-    let new_grid_text = String::from("n → New grid");
+    let new_grid_text = String::from(NEW);
     let new_grid_style = if state.is_solved == Some(true) {
         Style::default().fg(TEXT_TO_FILL_GOOD_FG)
     } else {
@@ -202,35 +218,35 @@ fn app<'a>(frame: &mut Frame, area: Rect, state: &State) {
     frame.render_widget(new_grid_paragraph, rows[0]);
 
     // Reset
-    let reset_text = String::from("r → Reset grid");
+    let reset_text = String::from(RESET);
     let reset_paragraph = Paragraph::new(reset_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(reset_paragraph, rows[1]);
 
     // Solve
-    let solve_text = String::from("s → Solve grid");
+    let solve_text = String::from(SOLVE);
     let solve_paragraph = Paragraph::new(solve_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(solve_paragraph, rows[2]);
 
     // Difficulty
-    let difficulty_text = String::from("+ / - → Change difficulty");
+    let difficulty_text = String::from(CHANGE_DIFFICULTY);
     let difficulty_paragraph = Paragraph::new(difficulty_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(difficulty_paragraph, rows[3]);
 
     // Zen
-    let zen_text = String::from("f → Toggle fullscreen");
+    let zen_text = String::from(FULLSCREEN);
     let zen_paragraph = Paragraph::new(zen_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);
     frame.render_widget(zen_paragraph, rows[4]);
 
     // Quit
-    let quit_text = String::from("q / Esc → Quit app");
+    let quit_text = String::from(ESCAPE);
     let quit_paragraph = Paragraph::new(quit_text)
         .style(Style::default().fg(TEXT_FG))
         .alignment(Alignment::Left);

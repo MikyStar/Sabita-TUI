@@ -54,6 +54,19 @@ impl From<usize> for DIFFICULTY {
     }
 }
 
+impl From<u8> for DIFFICULTY {
+    fn from(index: u8) -> Self {
+        match index {
+            0 => DIFFICULTY::One,
+            1 => DIFFICULTY::Two,
+            2 => DIFFICULTY::Three,
+            3 => DIFFICULTY::Four,
+            4 => DIFFICULTY::Five,
+            _ => DIFFICULTY::Five,
+        }
+    }
+}
+
 impl DIFFICULTY {
     pub fn get_index(&self) -> usize {
         *self as usize

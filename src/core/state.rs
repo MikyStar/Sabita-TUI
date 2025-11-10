@@ -37,7 +37,7 @@ pub struct State {
 
     pub streak: u8,
 
-    pub is_zen_mode: bool,
+    pub is_fullscreen: bool,
 
     /////////////////
     // Private
@@ -47,7 +47,7 @@ pub struct State {
 /////////////////
 
 impl State {
-    pub fn new(difficulty: Option<DIFFICULTY>) -> State {
+    pub fn new(difficulty: Option<DIFFICULTY>, is_fullscreen: bool) -> State {
         let difficulty = difficulty.unwrap_or(BASE_DIFFICULTY);
         let nb_missing_cells: u8 = difficulty.get_missing_cell_nb();
 
@@ -79,7 +79,7 @@ impl State {
 
             streak: 0,
 
-            is_zen_mode: false,
+            is_fullscreen,
 
             memoized_missing_box_locations,
         }
@@ -264,7 +264,7 @@ impl State {
 
         if current_difficulty_index < MAX_DIFFICULTY_INDEX {
             let next_difficulty = DIFFICULTY::try_from(current_difficulty_index + 1).unwrap();
-            *self = State::new(Some(next_difficulty));
+            *self = State::new(Some(next_difficulty), self.is_fullscreen);
         }
     }
 
@@ -273,16 +273,16 @@ impl State {
 
         if current_difficulty_index > 0 {
             let next_difficulty = DIFFICULTY::try_from(current_difficulty_index - 1).unwrap();
-            *self = State::new(Some(next_difficulty));
+            *self = State::new(Some(next_difficulty), self.is_fullscreen);
         }
     }
 
     pub fn new_from_same_difficulty(&mut self) {
-        *self = State::new(Some(self.difficulty));
+        *self = State::new(Some(self.difficulty), self.is_fullscreen);
     }
 
-    pub fn toggle_zen_mode(&mut self) {
-        self.is_zen_mode = !self.is_zen_mode;
+    pub fn toggle_fullscreen(&mut self) {
+        self.is_fullscreen = !self.is_fullscreen;
     }
 
     pub fn solve(&mut self) {
@@ -293,5 +293,6 @@ impl State {
         self.grid_to_solve = self.full_grid.clone();
         self.is_solved = Some(true);
         self.solved_at = Some(Instant::now());
+        self.streak = 0;
     }
 }

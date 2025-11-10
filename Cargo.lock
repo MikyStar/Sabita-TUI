@@ -18,16 +18,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
-name = "ascii_table"
-version = "4.0.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4ef8ee0b4eedc5a877a8a768fecfabbe4c8b9791e17763225139a858dabd8e7"
-dependencies = [
- "regex",
- "termize",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -305,15 +295,6 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "humanize-duration"
-version = "0.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "082247a9fa508369fe52b235aef8a8dbf931b08d223a1a9b70cd400a8a77ae9c"
-dependencies = [
- "time",
-]
-
-[[package]]
-name = "humanize-duration"
 version = "0.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d17650201754d4f79437bc2fa1f157273a7779de1391c818b275d6bb40998b9"
@@ -480,18 +461,6 @@ name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
-
-[[package]]
-name = "perfos"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "463d99f8e49b81291f942cf2adefe24778a902fa341e87bb7b792a6e89eeabc7"
-dependencies = [
- "ascii_table",
- "crossterm 0.28.1",
- "humanize-duration 0.0.6",
- "strip-ansi-escapes",
-]
 
 [[package]]
 name = "powerfmt"
@@ -672,11 +641,10 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 
 [[package]]
 name = "sabita"
-version = "0.4.3"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b39ea956d05bee440c89a413036f53abca99a05ca543f743f58a86b54c2a1225"
+checksum = "b79a433aa652dd77a2e13f51246c5fcf28ac104baab73806d207a22b2431e9f9"
 dependencies = [
- "perfos",
  "rand",
 ]
 
@@ -685,8 +653,9 @@ name = "sabita_tui"
 version = "0.1.0"
 dependencies = [
  "crossterm 0.29.0",
- "humanize-duration 0.0.7",
+ "humanize-duration",
  "ratatui",
+ "regex",
  "rusty-hook",
  "sabita",
 ]
@@ -769,15 +738,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
-name = "strip-ansi-escapes"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a8f8038e7e7969abb3f1b7c2a811225e9296da208539e0f79c5251d6cac0025"
-dependencies = [
- "vte",
-]
-
-[[package]]
 name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -814,16 +774,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "termize"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61946f539e9ff67cbc8df5b2e9823d84e0d58d74e342707c2dfb85405995827b"
-dependencies = [
- "libc",
- "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -888,15 +838,6 @@ name = "unicode-width"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fc81956842c57dac11422a97c3b8195a1ff727f06e85c84ed2e8aa277c9a0fd"
-
-[[package]]
-name = "vte"
-version = "0.14.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "231fdcd7ef3037e8330d8e17e61011a2c244126acc0a982f4040ac3f9f0bc077"
-dependencies = [
- "memchr",
-]
 
 [[package]]
 name = "wasi"
