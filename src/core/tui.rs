@@ -49,10 +49,8 @@ fn main_loop<B: ratatui::backend::Backend>(
     loop {
         terminal.draw(|f| render_app(f, state))?;
 
-        if poll(Duration::from_secs(1))? {
-            if handle_inputs(state)? {
-                return Ok(());
-            }
+        if poll(Duration::from_secs(1))? && handle_inputs(state)? {
+            return Ok(());
         }
     }
 }

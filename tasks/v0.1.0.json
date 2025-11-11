@@ -27,7 +27,7 @@
                     "name": "mouse click",
                     "id": 1,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "hjkl for cell jumps",
@@ -83,7 +83,7 @@
                     "name": "'s' to solve, popup to confirm",
                     "id": 3,
                     "timestamp": "08/11/2025",
-                    "state": "todo"
+                    "state": "wip"
                 }
             ],
             "timestamp": "01/11/2025",
@@ -149,7 +149,7 @@
             "name": "cli flag to hide everything but the grid",
             "id": 4,
             "timestamp": "07/11/2025",
-            "state": "todo"
+            "state": "done"
         },
         {
             "name": "countdown mode",

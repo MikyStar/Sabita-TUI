@@ -5,6 +5,8 @@
 
 A Terminal User Interface for the Sabita sudoku package.
 
+![screenshot](./assets/screenshot.png)
+
 ## CLI
 
 ### Install
@@ -28,23 +30,40 @@ cargo install sabita_tui
 ### Use
 
 ```sh
-# Generator
-sabita_tui # Runs the interface
+Prototype:
+      sabita_tui [--difficulty=<1-5>] [--fullscreen] [--version] [--help]
 
-# Help
-sabita_tui -h
-sabita_tui --help
+Optional args:
+      --difficulty=<1-5> or -d=<1-5>     # Start with a specific difficulty (from 1 to 5)
+      -f or --fullscreen                 # Enter fullscreen from the launch (no keybings nor timer shown)
+      -v or --version                    # Show package version
+      -h or--help                        # Prints this help
 
-# Version
-sabita_tui -v
-sabita_tui --version
+Example:
+      sabita_tui         # Just runs the app
+      sabita_tui -d=3 -f # Runs the app with a starting difficulty of 3 and in fullscreen
+
+In app bindings:
+      Filling values:
+         1-9 → Change
+         0 / Backspace / Delete → Clear
+      Moving:
+         Arrow keys / hjkl / Mouse → Move
+         Tab / Shift+Tab → Cycle
+      App:
+         n → New grid
+         r → Reset grid
+         s → Solve grid
+         + / - → Change difficulty
+         f → Toggle fullscreen
+         q / Esc → Quit app
 ```
 
 ## Dev
 
 ### Commands
 
-> Many aliases and sequences are handled through [cargo-make](https://crates.io/crates/cargo-make) *you will need to install it*
+> Many aliases and sequences are handled through [cargo-make](https://crates.io/crates/cargo-make) _you will need to install it_
 
 ```sh
 cargo run # Builds and run the project

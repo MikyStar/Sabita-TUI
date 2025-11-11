@@ -42,18 +42,15 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
             _ => {}
         }
     } else if let Event::Mouse(mouse) = event {
-        match mouse.kind == MouseEventKind::Down(MouseButton::Left) {
-            true => {
-                if let Some(grid_area) = state.grid_area {
-                    if let Some((row, col)) =
-                        screen_pos_to_grid_pos(mouse.column, mouse.row, grid_area, state)
-                    {
-                        state.cursor_row = row;
-                        state.cursor_col = col;
-                    }
+        if mouse.kind == MouseEventKind::Down(MouseButton::Left) {
+            if let Some(grid_area) = state.grid_area {
+                if let Some((row, col)) =
+                    screen_pos_to_grid_pos(mouse.column, mouse.row, grid_area, state)
+                {
+                    state.cursor_row = row;
+                    state.cursor_col = col;
                 }
             }
-            false => {}
         }
     }
 
