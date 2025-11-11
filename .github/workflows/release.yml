@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  PKG_NAME: sabita-tui
+  PKG_NAME: sabita_tui
   BIN_FOLDER: bin/
 
 jobs:

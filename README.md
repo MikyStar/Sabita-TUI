@@ -3,7 +3,7 @@
 ![Lint/Security/Dependencies/Tests](https://github.com/MikyStar/Sabita-TUI/actions/workflows/test-lint-audit.yml/badge.svg)
 ![crates.io version](https://img.shields.io/crates/v/sabita_tui)
 
-A Terminal User Interface for the Sabita sudoku package.
+A Terminal User Interface for the [Sabita sudoku package](https://crates.io/crates/sabita)
 
 ![screenshot](./assets/screenshot.png)
 
@@ -12,8 +12,6 @@ A Terminal User Interface for the Sabita sudoku package.
 ### Install
 
 #### From a binary release
-
-**You will need to [install jq](https://jqlang.org/download/)**
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/MikyStar/Sabita-TUI/refs/heads/main/install.sh | sh
