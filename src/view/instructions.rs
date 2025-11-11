@@ -19,7 +19,7 @@ pub const CHANGE_VALUE: &str = "1-9 → Change";
 pub const CLEAR_VALUE: &str = "0 / Backspace / Delete → Clear";
 
 pub const MOVING: &str = "Moving";
-pub const MOVE: &str = "Arrow keys / hjkl → Move";
+pub const MOVE: &str = "Arrow keys / hjkl / Mouse → Move";
 pub const CYCLE: &str = "Tab / Shift+Tab → Cycle";
 
 pub const APP: &str = "App";

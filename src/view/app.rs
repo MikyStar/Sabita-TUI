@@ -14,7 +14,7 @@ use crate::{
 
 ////////////////////////////////////////
 
-pub fn render_app(frame: &mut Frame, state: &State) {
+pub fn render_app(frame: &mut Frame, state: &mut State) {
     let size = frame.area();
 
     let constraints = if state.is_fullscreen {

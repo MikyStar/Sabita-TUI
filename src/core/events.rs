@@ -1,13 +1,15 @@
 use std::io;
 
-use crate::core::state::State;
+use crate::core::state::{State, LENGTH_USIZE};
 
-use crossterm::event::{self, Event, KeyCode};
+use crossterm::event::{self, Event, KeyCode, MouseButton, MouseEventKind};
+use ratatui::layout::Rect;
+use sabita::core::constants::{LENGTH_DIMENSION, TO_BE_SOLVED};
 
 ////////////////////////////////////////
 
 /// Returns 'true' if TUI should stop
-pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
+pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
     let event = event::read()?;
 
     if let Event::Key(key) = event {
@@ -39,7 +41,58 @@ pub fn handle_keyboard_events(state: &mut State) -> io::Result<bool> {
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
         }
+    } else if let Event::Mouse(mouse) = event {
+        match mouse.kind == MouseEventKind::Down(MouseButton::Left) {
+            true => {
+                if let Some(grid_area) = state.grid_area {
+                    if let Some((row, col)) =
+                        screen_pos_to_grid_pos(mouse.column, mouse.row, grid_area, state)
+                    {
+                        state.cursor_row = row;
+                        state.cursor_col = col;
+                    }
+                }
+            }
+            false => {}
+        }
     }
 
     Ok(false)
+}
+
+////////////////////
+
+fn screen_pos_to_grid_pos(
+    x: u16,
+    y: u16,
+    grid_area: Rect,
+    state: &State,
+) -> Option<(usize, usize)> {
+    let margin = 2;
+
+    // Check if click is within the grid area
+    if x < grid_area.x + margin || y < grid_area.y + margin {
+        return None;
+    }
+
+    let rel_x = x.saturating_sub(grid_area.x + margin);
+    let rel_y = y.saturating_sub(grid_area.y + margin);
+
+    // Calculate cell dimensions
+    let grid_width = grid_area.width.saturating_sub(margin * 2);
+    let grid_height = grid_area.height.saturating_sub(margin * 2);
+
+    let cell_width = grid_width / LENGTH_DIMENSION as u16;
+    let cell_height = grid_height / LENGTH_DIMENSION as u16;
+
+    let col = (rel_x / cell_width) as usize;
+    let row = (rel_y / cell_height) as usize;
+
+    let is_clickable = state.original_grid.values[row][col] == TO_BE_SOLVED;
+
+    if is_clickable && row <= LENGTH_USIZE && col <= LENGTH_USIZE {
+        Some((row, col))
+    } else {
+        None
+    }
 }

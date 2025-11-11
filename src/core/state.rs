@@ -1,5 +1,6 @@
 use std::time::Instant;
 
+use ratatui::layout::Rect;
 use sabita::core::{
     constants::{LENGTH_DIMENSION, TO_BE_SOLVED},
     grid::{BoxLocation, Grid},
@@ -21,6 +22,8 @@ pub struct State {
     pub grid_to_solve: Grid,
     pub original_grid: Grid,
     pub full_grid: Grid,
+
+    pub grid_area: Option<Rect>,
 
     pub cursor_row: usize,
     pub cursor_col: usize,
@@ -63,6 +66,8 @@ impl State {
             grid_to_solve: grid.clone(),
             original_grid: grid.clone(),
             full_grid,
+
+            grid_area: None,
 
             cursor_row: line,
             cursor_col: column,

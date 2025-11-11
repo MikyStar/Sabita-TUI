@@ -7,7 +7,7 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 use std::{io, time::Duration};
 
 use crate::{
-    core::{difficulty::DIFFICULTY, events::handle_keyboard_events, state::State},
+    core::{difficulty::DIFFICULTY, events::handle_inputs, state::State},
     view::app::render_app,
 };
 
@@ -50,7 +50,7 @@ fn main_loop<B: ratatui::backend::Backend>(
         terminal.draw(|f| render_app(f, state))?;
 
         if poll(Duration::from_secs(1))? {
-            if handle_keyboard_events(state)? {
+            if handle_inputs(state)? {
                 return Ok(());
             }
         }
