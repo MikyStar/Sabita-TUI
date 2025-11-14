@@ -44,14 +44,6 @@
                 {
                     "name": "'n' to make a new one",
                     "id": 11,
-                    "subtasks": [
-                        {
-                            "name": "make a confirmation if sudoku in progress",
-                            "id": 12,
-                            "timestamp": "01/11/2025",
-                            "state": "todo"
-                        }
-                    ],
                     "timestamp": "01/11/2025",
                     "state": "done"
                 },
@@ -80,10 +72,10 @@
                     "state": "done"
                 },
                 {
-                    "name": "'s' to solve, popup to confirm",
+                    "name": "'s' to solve",
                     "id": 3,
                     "timestamp": "08/11/2025",
-                    "state": "wip"
+                    "state": "done"
                 }
             ],
             "timestamp": "01/11/2025",
@@ -161,7 +153,7 @@
             "name": "streak system",
             "id": 22,
             "timestamp": "09/11/2025",
-            "state": "todo"
+            "state": "done"
         },
         {
             "name": "fullscreen",

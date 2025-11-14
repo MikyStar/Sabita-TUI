@@ -219,8 +219,13 @@ fn app(frame: &mut Frame, area: Rect, state: &State) {
 
     // Reset
     let reset_text = String::from(RESET);
+    let reset_style = if state.is_solved == Some(false) {
+        Style::default().fg(TEXT_TO_FILL_WRONG_FG)
+    } else {
+        Style::default().fg(TEXT_FG)
+    };
     let reset_paragraph = Paragraph::new(reset_text)
-        .style(Style::default().fg(TEXT_FG))
+        .style(reset_style)
         .alignment(Alignment::Left);
     frame.render_widget(reset_paragraph, rows[1]);
 

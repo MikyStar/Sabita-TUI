@@ -262,6 +262,8 @@ impl State {
         self.remaining_nb_missing_values = self.original_nb_missing_values;
 
         self.is_solved = None;
+
+        self.streak = 0;
     }
 
     pub fn increase_difficulty(&mut self) {
@@ -283,7 +285,13 @@ impl State {
     }
 
     pub fn new_from_same_difficulty(&mut self) {
+        let new_streak = match self.is_solved {
+            Some(true) => self.streak + 1,
+            Some(false) | None => 0,
+        };
+
         *self = State::new(Some(self.difficulty), self.is_fullscreen);
+        self.streak = new_streak;
     }
 
     pub fn toggle_fullscreen(&mut self) {
