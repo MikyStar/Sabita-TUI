@@ -36,17 +36,16 @@ case "$OS" in
             exit 1
         fi
         ;;
-    # TODO
-    # MINGW*|MSYS*|CYGWIN*)
-    #     if [ "$ARCH" = "x86_64" ]; then
-    #         TARGET="x86_64-pc-windows-msvc"
-    #     elif [ "$ARCH" = "aarch64" ]; then
-    #         TARGET="aarch64-pc-windows-msvc"
-    #     else
-    #         echo "Unsupported Windows architecture: $ARCH"
-    #         exit 1
-    #     fi
-    #     ;;
+    MINGW*|MSYS*|CYGWIN*)
+        if [ "$ARCH" = "x86_64" ]; then
+            TARGET="x86_64-pc-windows-msvc"
+        elif [ "$ARCH" = "aarch64" ]; then
+            TARGET="aarch64-pc-windows-msvc"
+        else
+            echo "Unsupported Windows architecture: $ARCH"
+            exit 1
+        fi
+        ;;
     *)
         echo "Unsupported OS: $OS"
         exit 1
