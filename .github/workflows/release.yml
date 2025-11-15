@@ -60,7 +60,7 @@ jobs:
         if: runner.os == 'Linux'
         run: cross build --release --target ${{ matrix.target }}
       - name: Build binary (Others)
-        if: runner.os == 'Linux'
+        if: runner.os != 'Linux'
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Sharing version
