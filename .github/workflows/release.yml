@@ -78,6 +78,7 @@ jobs:
             echo "pkg_version=v$(cargo metadata | jq '.packages[] | select(.name=="${{ env.PKG_NAME }}") .version' | tr -d '"')" >> $GITHUB_OUTPUT
 
       - name: Package binary
+        shell: bash
         run: |
           mkdir -p $BIN_FOLDER
           asset_name="$PKG_NAME-${{ steps.set-envvar.outputs.pkg_version }}-${{ matrix.target }}"
