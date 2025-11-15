@@ -1,7 +1,7 @@
 [package]
 name = "sabita_tui"
 description = "A TUI for the Sabita sudoku package"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Mike AUBENAS"]
 edition = "2021"
 readme = "README.md"

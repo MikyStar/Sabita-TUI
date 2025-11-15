@@ -79,7 +79,7 @@
                 }
             ],
             "timestamp": "01/11/2025",
-            "state": "wip"
+            "state": "done"
         },
         {
             "name": "view",
@@ -89,19 +89,13 @@
                     "name": "success streak if more than one sudoku",
                     "id": 7,
                     "timestamp": "01/11/2025",
-                    "state": "todo"
+                    "state": "done"
                 },
                 {
                     "name": "timer for current sudoku",
                     "id": 8,
                     "timestamp": "01/11/2025",
                     "state": "done"
-                },
-                {
-                    "name": "timer for current session if more than one sudoku",
-                    "id": 9,
-                    "timestamp": "01/11/2025",
-                    "state": "todo"
                 },
                 {
                     "name": "difficulty",
@@ -135,19 +129,13 @@
                 }
             ],
             "timestamp": "01/11/2025",
-            "state": "wip"
+            "state": "done"
         },
         {
             "name": "cli flag to hide everything but the grid",
             "id": 4,
             "timestamp": "07/11/2025",
             "state": "done"
-        },
-        {
-            "name": "countdown mode",
-            "id": 21,
-            "timestamp": "09/11/2025",
-            "state": "todo"
         },
         {
             "name": "streak system",
