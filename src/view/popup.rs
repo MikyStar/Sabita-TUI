@@ -41,7 +41,7 @@ pub fn render_confirmation_dialog(frame: &mut Frame, area: Rect, state: &mut Sta
 
     let rows = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(75), Constraint::Percentage(25)])
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
         .margin(2)
         .split(inner_block);
     let [top, bottom] = *rows else {
@@ -81,15 +81,19 @@ fn render_buttons(frame: &mut Frame, area: Rect) {
 
     // Confirm
     let confirm_text = String::from("Yes (y)");
+    let confirm_style = Style::default().fg(Color::Green);
     let confirm_paragraph = Paragraph::new(confirm_text)
-        .style(Style::default().fg(Color::Green))
+        .style(confirm_style)
+        .block(Block::default().borders(Borders::ALL).style(confirm_style))
         .alignment(Alignment::Center);
     frame.render_widget(confirm_paragraph, cols[0]);
 
     // Cancel
     let cancel_text = String::from("No (n)");
+    let cancel_style = Style::default().fg(Color::Red);
     let cancel_paragraph = Paragraph::new(cancel_text)
-        .style(Style::default().fg(Color::Red))
+        .style(cancel_style)
+        .block(Block::default().borders(Borders::ALL).style(cancel_style))
         .alignment(Alignment::Center);
     frame.render_widget(cancel_paragraph, cols[1]);
 }
