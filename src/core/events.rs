@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, rc::Rc};
 
 use crate::core::state::{State, LENGTH_USIZE};
 
@@ -32,8 +32,20 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
             KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
 
             // App
-            KeyCode::Char('n') => state.new_from_same_difficulty(),
-            KeyCode::Char('r') => state.reset(),
+            KeyCode::Char('y') => {
+                if let Some(dialog_data) = state.confirmation_dialog_data.as_ref() {
+                    let on_confirm = Rc::clone(&dialog_data.callbacks.on_confirm);
+                    on_confirm(state)
+                }
+            }
+            KeyCode::Char('n') => match state.confirmation_dialog_data.as_ref() {
+                Some(dialog_data) => {
+                    let on_cancel = Rc::clone(&dialog_data.callbacks.on_cancel);
+                    on_cancel(state);
+                }
+                None => state.new_from_same_difficulty(),
+            },
+            KeyCode::Char('r') => state.ask_reset(),
             KeyCode::Char('+') => state.increase_difficulty(),
             KeyCode::Char('-') => state.decrease_difficulty(),
             KeyCode::Char('s') => state.solve(),
