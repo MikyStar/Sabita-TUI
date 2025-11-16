@@ -3,7 +3,7 @@ use std::rc::Rc;
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Flex, Layout, Rect},
     style::{Color, Style},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Paragraph, Wrap},
     Frame,
 };
 
@@ -41,7 +41,8 @@ pub fn render_confirmation_dialog(frame: &mut Frame, area: Rect, state: &mut Sta
 
     let rows = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(25), Constraint::Percentage(75)])
+        .constraints([Constraint::Percentage(75), Constraint::Percentage(25)])
+        .margin(2)
         .split(inner_block);
     let [top, bottom] = *rows else {
         panic!("Expected 2 rows");
@@ -50,6 +51,7 @@ pub fn render_confirmation_dialog(frame: &mut Frame, area: Rect, state: &mut Sta
     // Render
     let desc_paragraph = Paragraph::new(description)
         .style(Style::default().fg(Color::White))
+        .wrap(Wrap { trim: true })
         .alignment(Alignment::Center);
     frame.render_widget(desc_paragraph, top);
 
@@ -78,16 +80,16 @@ fn render_buttons(frame: &mut Frame, area: Rect) {
         .split(area);
 
     // Confirm
-    let confirm_text = String::from("Confirm (y)");
+    let confirm_text = String::from("Yes (y)");
     let confirm_paragraph = Paragraph::new(confirm_text)
         .style(Style::default().fg(Color::Green))
         .alignment(Alignment::Center);
     frame.render_widget(confirm_paragraph, cols[0]);
 
     // Cancel
-    let cancel_text = String::from("Cancel (n)");
+    let cancel_text = String::from("No (n)");
     let cancel_paragraph = Paragraph::new(cancel_text)
         .style(Style::default().fg(Color::Red))
-        .alignment(Alignment::Left);
+        .alignment(Alignment::Center);
     frame.render_widget(cancel_paragraph, cols[1]);
 }
