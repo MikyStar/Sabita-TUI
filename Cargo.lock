@@ -641,9 +641,9 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 
 [[package]]
 name = "sabita"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "406cc986d6ab2d03b331d9aad0684191de3b84d52fe0a7f52202bdb89e4de1c9"
+checksum = "771fd51c882dd580f856c1d31317ce3c8e27619974f0e08702380ee10526b8f5"
 dependencies = [
  "rand",
 ]
