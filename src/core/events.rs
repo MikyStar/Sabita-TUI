@@ -1,8 +1,8 @@
-use std::io;
+use std::{io, rc::Rc};
 
 use crate::core::state::{State, LENGTH_USIZE};
 
-use crossterm::event::{self, Event, KeyCode, MouseButton, MouseEventKind};
+use crossterm::event::{self, Event, KeyCode, KeyEvent, MouseButton, MouseEventKind};
 use ratatui::layout::Rect;
 use sabita::core::constants::{LENGTH_DIMENSION, TO_BE_SOLVED};
 
@@ -13,39 +13,44 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
     let event = event::read()?;
 
     if let Event::Key(key) = event {
+        let is_modal_open = state.confirmation_dialog_data.is_some();
+
+        if !is_modal_open {
+            handle_moving_keys(key, state);
+            handle_filling_keys(key, state);
+            handle_settings_keys(key, state);
+        }
+
         match key.code {
-            // Moving
-            KeyCode::Up | KeyCode::Char('k') => state.move_cell_top(),
-            KeyCode::Down | KeyCode::Char('j') => state.move_cell_bottom(),
-            KeyCode::Left | KeyCode::Char('h') => state.move_cell_left(),
-            KeyCode::Right | KeyCode::Char('l') => state.move_cell_right(),
-
-            KeyCode::Tab => state.move_next_cell(),
-            KeyCode::BackTab => state.move_previous_cell(),
-
-            // Filling
-            KeyCode::Char(c) if c.is_ascii_digit() => {
-                if let Some(d) = c.to_digit(10) {
-                    state.set_number(d as u8);
+            KeyCode::Char('y') => {
+                if let Some(dialog_data) = state.confirmation_dialog_data.as_ref() {
+                    let on_confirm = Rc::clone(&dialog_data.callbacks.on_confirm);
+                    on_confirm(state)
                 }
             }
-            KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
-
-            // App
-            KeyCode::Char('n') => state.new_from_same_difficulty(),
-            KeyCode::Char('r') => state.reset(),
-            KeyCode::Char('+') => state.increase_difficulty(),
-            KeyCode::Char('-') => state.decrease_difficulty(),
-            KeyCode::Char('s') => state.solve(),
+            KeyCode::Char('n') => match state.confirmation_dialog_data.as_ref() {
+                Some(dialog_data) => {
+                    let on_cancel = Rc::clone(&dialog_data.callbacks.on_cancel);
+                    on_cancel(state);
+                }
+                None => state.ask_new_game(),
+            },
             KeyCode::Char('f') => state.toggle_fullscreen(),
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
         }
     } else if let Event::Mouse(mouse) = event {
         if mouse.kind == MouseEventKind::Down(MouseButton::Left) {
-            if let Some(grid_area) = state.grid_area {
-                if let Some((row, col)) =
-                    screen_pos_to_grid_pos(mouse.column, mouse.row, grid_area, state)
+            if let Some(clickable_area) = state.clickable_area {
+                if state.confirmation_dialog_data.is_some() {
+                    click_on_confirmation_modal_action(
+                        mouse.column,
+                        mouse.row,
+                        clickable_area,
+                        state,
+                    );
+                } else if let Some((row, col)) =
+                    screen_pos_to_grid_pos(mouse.column, mouse.row, clickable_area, state)
                 {
                     state.cursor_row = row;
                     state.cursor_col = col;
@@ -57,6 +62,46 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
     Ok(false)
 }
 
+////////////////////
+
+fn handle_moving_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Up | KeyCode::Char('k') => state.move_cell_top(),
+        KeyCode::Down | KeyCode::Char('j') => state.move_cell_bottom(),
+        KeyCode::Left | KeyCode::Char('h') => state.move_cell_left(),
+        KeyCode::Right | KeyCode::Char('l') => state.move_cell_right(),
+
+        KeyCode::Tab => state.move_next_cell(),
+        KeyCode::BackTab => state.move_previous_cell(),
+
+        _ => {}
+    }
+}
+
+fn handle_filling_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Char(c) if c.is_ascii_digit() => {
+            if let Some(d) = c.to_digit(10) {
+                state.set_number(d as u8);
+            }
+        }
+        KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
+
+        _ => {}
+    }
+}
+
+fn handle_settings_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Char('r') => state.ask_reset(),
+        KeyCode::Char('s') => state.ask_solve(),
+
+        KeyCode::Char('+') => state.increase_difficulty(),
+        KeyCode::Char('-') => state.decrease_difficulty(),
+
+        _ => {}
+    }
+}
 ////////////////////
 
 fn screen_pos_to_grid_pos(
@@ -91,5 +136,32 @@ fn screen_pos_to_grid_pos(
         Some((row, col))
     } else {
         None
+    }
+}
+
+fn click_on_confirmation_modal_action(x: u16, y: u16, modal_area: Rect, state: &mut State) {
+    let margin = 0;
+
+    if x < modal_area.x + margin
+        || x > modal_area.width + modal_area.x
+        || y < modal_area.y + margin
+        || y > modal_area.y + modal_area.height
+    {
+        return;
+    }
+
+    let rel_x = x.saturating_sub(modal_area.x + margin);
+
+    let modal_width = modal_area.width.saturating_sub(margin * 2);
+    let button_width = modal_width / 2;
+
+    let dialog_data = state.confirmation_dialog_data.as_ref().unwrap();
+
+    if rel_x < button_width {
+        let on_confirm = Rc::clone(&dialog_data.callbacks.on_confirm);
+        on_confirm(state);
+    } else {
+        let on_cancel = Rc::clone(&dialog_data.callbacks.on_cancel);
+        on_cancel(state);
     }
 }

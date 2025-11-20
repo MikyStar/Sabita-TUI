@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{rc::Rc, time::Instant};
 
 use ratatui::layout::Rect;
 use sabita::core::{
@@ -7,7 +7,10 @@ use sabita::core::{
     validation::validate,
 };
 
-use crate::core::difficulty::{DIFFICULTY, MAX_DIFFICULTY_INDEX};
+use crate::{
+    core::difficulty::{DIFFICULTY, MAX_DIFFICULTY_INDEX},
+    view::popup::{ConfirmationDialogCallbacks, ConfirmationDialogData},
+};
 
 ////////////////////////////////////////
 
@@ -16,14 +19,14 @@ pub const BASE_DIFFICULTY: DIFFICULTY = DIFFICULTY::One;
 
 ////////////////////////////////////////
 
-pub struct State {
+pub struct State<'a> {
     /////////////////
     // Public
     pub grid_to_solve: Grid,
     pub original_grid: Grid,
     pub full_grid: Grid,
 
-    pub grid_area: Option<Rect>,
+    pub clickable_area: Option<Rect>,
 
     pub cursor_row: usize,
     pub cursor_col: usize,
@@ -31,9 +34,11 @@ pub struct State {
     pub original_nb_missing_values: u8,
     pub remaining_nb_missing_values: u8,
 
+    /// Empty if cells to solve remaining, otherwise contains the status of resolution
     pub is_solved: Option<bool>,
 
     pub start: Instant,
+    /// Empty if cells not finished, otherwise contains timestamp of resolution
     pub solved_at: Option<Instant>,
 
     pub difficulty: DIFFICULTY,
@@ -42,6 +47,9 @@ pub struct State {
 
     pub is_fullscreen: bool,
 
+    /// Empty if no dialog, otherwise contains dialog data
+    pub confirmation_dialog_data: Option<ConfirmationDialogData<'a>>,
+
     /////////////////
     // Private
     memoized_missing_box_locations: Vec<BoxLocation>,
@@ -49,8 +57,8 @@ pub struct State {
 
 /////////////////
 
-impl State {
-    pub fn new(difficulty: Option<DIFFICULTY>, is_fullscreen: bool) -> State {
+impl State<'_> {
+    pub fn new(difficulty: Option<DIFFICULTY>, is_fullscreen: bool) -> State<'static> {
         let difficulty = difficulty.unwrap_or(BASE_DIFFICULTY);
         let nb_missing_cells: u8 = difficulty.get_missing_cell_nb();
 
@@ -67,7 +75,7 @@ impl State {
             original_grid: grid.clone(),
             full_grid,
 
-            grid_area: None,
+            clickable_area: None,
 
             cursor_row: line,
             cursor_col: column,
@@ -85,6 +93,8 @@ impl State {
             streak: 0,
 
             is_fullscreen,
+
+            confirmation_dialog_data: None,
 
             memoized_missing_box_locations,
         }
@@ -251,6 +261,22 @@ impl State {
 
     // App controls
 
+    pub fn ask_reset(&mut self) {
+        let dialog = ConfirmationDialogData {
+            title: "Reset",
+            description: "Are you sure you want to reset the current grid ?",
+            callbacks: ConfirmationDialogCallbacks {
+                on_confirm: Rc::new(|state| {
+                    state.reset();
+                    state.clear_dialog();
+                }),
+                on_cancel: Rc::new(|state| state.clear_dialog()),
+            },
+        };
+
+        self.confirmation_dialog_data = Some(dialog);
+    }
+
     pub fn reset(&mut self) {
         let BoxLocation { line, column, .. } = self.memoized_missing_box_locations[0];
 
@@ -284,6 +310,21 @@ impl State {
         }
     }
 
+    pub fn ask_new_game(&mut self) {
+        let dialog = ConfirmationDialogData {
+            title: "New grid",
+            description: "Are you sure you want to start a new grid ?",
+            callbacks: ConfirmationDialogCallbacks {
+                on_confirm: Rc::new(|state| {
+                    state.new_from_same_difficulty();
+                    state.clear_dialog();
+                }),
+                on_cancel: Rc::new(|state| state.clear_dialog()),
+            },
+        };
+
+        self.confirmation_dialog_data = Some(dialog);
+    }
     pub fn new_from_same_difficulty(&mut self) {
         let new_streak = match self.is_solved {
             Some(true) => self.streak + 1,
@@ -298,6 +339,22 @@ impl State {
         self.is_fullscreen = !self.is_fullscreen;
     }
 
+    pub fn ask_solve(&mut self) {
+        let dialog = ConfirmationDialogData {
+            title: "Solve",
+            description: "Are you sure you want to solve this grid ?",
+            callbacks: ConfirmationDialogCallbacks {
+                on_confirm: Rc::new(|state| {
+                    state.solve();
+                    state.clear_dialog();
+                }),
+                on_cancel: Rc::new(|state| state.clear_dialog()),
+            },
+        };
+
+        self.confirmation_dialog_data = Some(dialog);
+    }
+
     pub fn solve(&mut self) {
         if self.is_solved.is_some() {
             return;
@@ -307,5 +364,9 @@ impl State {
         self.is_solved = Some(true);
         self.solved_at = Some(Instant::now());
         self.streak = 0;
+    }
+
+    fn clear_dialog(&mut self) {
+        self.confirmation_dialog_data = None;
     }
 }

@@ -76,8 +76,6 @@ pub fn parse_args() -> Args {
         DIFFICULTY::from(level - 1)
     });
 
-    println!("{:?}", difficulty_level_regex.captures(&cli_phrase));
-
     Args {
         action: ACTION::RunUi,
         state_param: StateParam {

@@ -1,7 +1,7 @@
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Clear, Paragraph},
     Frame,
 };
 
@@ -9,7 +9,12 @@ use sabita::core::constants::PKG_NAME as SABITA_PKG_NAME;
 
 use crate::{
     core::state::State,
-    view::{grid::render_grid, instructions::render_instructions, utils::center_rect},
+    view::{
+        grid::render_grid,
+        instructions::render_instructions,
+        popup::{get_popup_area, render_confirmation_dialog},
+        utils::center_rect,
+    },
 };
 
 ////////////////////////////////////////
@@ -43,6 +48,7 @@ pub fn render_app(frame: &mut Frame, state: &mut State) {
     let grid_dimension = center.width;
     let grid_area = center_rect(center, grid_dimension, grid_dimension);
 
+    // Render
     if state.is_fullscreen {
         render_grid(frame, state, grid_area);
     } else {
@@ -52,6 +58,15 @@ pub fn render_app(frame: &mut Frame, state: &mut State) {
         render_grid(frame, state, grid_area);
 
         render_instructions(frame, bottom, state);
+    }
+
+    // Popup
+    if state.confirmation_dialog_data.is_some() {
+        let popup_area = get_popup_area(size);
+
+        frame.render_widget(Clear, popup_area); // Clears the background
+
+        render_confirmation_dialog(frame, popup_area, state);
     }
 }
 
