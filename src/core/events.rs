@@ -2,7 +2,7 @@ use std::{io, rc::Rc};
 
 use crate::core::state::{State, LENGTH_USIZE};
 
-use crossterm::event::{self, Event, KeyCode, MouseButton, MouseEventKind};
+use crossterm::event::{self, Event, KeyCode, KeyEvent, MouseButton, MouseEventKind};
 use ratatui::layout::Rect;
 use sabita::core::constants::{LENGTH_DIMENSION, TO_BE_SOLVED};
 
@@ -13,25 +13,15 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
     let event = event::read()?;
 
     if let Event::Key(key) = event {
+        let is_modal_open = state.confirmation_dialog_data.is_some();
+
+        if !is_modal_open {
+            handle_moving_keys(key, state);
+            handle_filling_keys(key, state);
+            handle_settings_keys(key, state);
+        }
+
         match key.code {
-            // Moving
-            KeyCode::Up | KeyCode::Char('k') => state.move_cell_top(),
-            KeyCode::Down | KeyCode::Char('j') => state.move_cell_bottom(),
-            KeyCode::Left | KeyCode::Char('h') => state.move_cell_left(),
-            KeyCode::Right | KeyCode::Char('l') => state.move_cell_right(),
-
-            KeyCode::Tab => state.move_next_cell(),
-            KeyCode::BackTab => state.move_previous_cell(),
-
-            // Filling
-            KeyCode::Char(c) if c.is_ascii_digit() => {
-                if let Some(d) = c.to_digit(10) {
-                    state.set_number(d as u8);
-                }
-            }
-            KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
-
-            // App
             KeyCode::Char('y') => {
                 if let Some(dialog_data) = state.confirmation_dialog_data.as_ref() {
                     let on_confirm = Rc::clone(&dialog_data.callbacks.on_confirm);
@@ -45,10 +35,6 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
                 }
                 None => state.ask_new_game(),
             },
-            KeyCode::Char('r') => state.ask_reset(),
-            KeyCode::Char('+') => state.increase_difficulty(),
-            KeyCode::Char('-') => state.decrease_difficulty(),
-            KeyCode::Char('s') => state.ask_solve(),
             KeyCode::Char('f') => state.toggle_fullscreen(),
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
@@ -76,6 +62,46 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
     Ok(false)
 }
 
+////////////////////
+
+fn handle_moving_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Up | KeyCode::Char('k') => state.move_cell_top(),
+        KeyCode::Down | KeyCode::Char('j') => state.move_cell_bottom(),
+        KeyCode::Left | KeyCode::Char('h') => state.move_cell_left(),
+        KeyCode::Right | KeyCode::Char('l') => state.move_cell_right(),
+
+        KeyCode::Tab => state.move_next_cell(),
+        KeyCode::BackTab => state.move_previous_cell(),
+
+        _ => {}
+    }
+}
+
+fn handle_filling_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Char(c) if c.is_ascii_digit() => {
+            if let Some(d) = c.to_digit(10) {
+                state.set_number(d as u8);
+            }
+        }
+        KeyCode::Backspace | KeyCode::Delete | KeyCode::Char('0') => state.clear_cell(),
+
+        _ => {}
+    }
+}
+
+fn handle_settings_keys(key: KeyEvent, state: &mut State) {
+    match key.code {
+        KeyCode::Char('r') => state.ask_reset(),
+        KeyCode::Char('s') => state.ask_solve(),
+
+        KeyCode::Char('+') => state.increase_difficulty(),
+        KeyCode::Char('-') => state.decrease_difficulty(),
+
+        _ => {}
+    }
+}
 ////////////////////
 
 fn screen_pos_to_grid_pos(
