@@ -55,7 +55,7 @@ pub fn render_confirmation_dialog(frame: &mut Frame, area: Rect, state: &mut Sta
         .alignment(Alignment::Center);
     frame.render_widget(desc_paragraph, top);
 
-    render_buttons(frame, bottom);
+    render_buttons(frame, bottom, state);
 }
 
 pub fn get_popup_area(area: Rect) -> Rect {
@@ -69,7 +69,9 @@ pub fn get_popup_area(area: Rect) -> Rect {
 
 ////////////////////
 
-fn render_buttons(frame: &mut Frame, area: Rect) {
+fn render_buttons(frame: &mut Frame, area: Rect, state: &mut State) {
+    state.clickable_area = Some(area);
+
     let nb_rows = 2;
 
     // Main frame

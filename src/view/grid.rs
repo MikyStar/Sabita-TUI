@@ -22,7 +22,7 @@ const TEXT_STATIC_FG: Color = Color::White;
 ////////////////////////////////////////
 
 pub fn render_grid(f: &mut Frame, state: &mut State, area: Rect) {
-    state.grid_area = Some(area);
+    state.clickable_area = Some(area);
 
     // Create 9 rows
     let rows = Layout::default()

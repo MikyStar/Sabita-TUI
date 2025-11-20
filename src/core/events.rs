@@ -55,9 +55,16 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
         }
     } else if let Event::Mouse(mouse) = event {
         if mouse.kind == MouseEventKind::Down(MouseButton::Left) {
-            if let Some(grid_area) = state.grid_area {
-                if let Some((row, col)) =
-                    screen_pos_to_grid_pos(mouse.column, mouse.row, grid_area, state)
+            if let Some(clickable_area) = state.clickable_area {
+                if state.confirmation_dialog_data.is_some() {
+                    click_on_confirmation_modal_action(
+                        mouse.column,
+                        mouse.row,
+                        clickable_area,
+                        state,
+                    );
+                } else if let Some((row, col)) =
+                    screen_pos_to_grid_pos(mouse.column, mouse.row, clickable_area, state)
                 {
                     state.cursor_row = row;
                     state.cursor_col = col;
@@ -103,5 +110,32 @@ fn screen_pos_to_grid_pos(
         Some((row, col))
     } else {
         None
+    }
+}
+
+fn click_on_confirmation_modal_action(x: u16, y: u16, modal_area: Rect, state: &mut State) {
+    let margin = 0;
+
+    if x < modal_area.x + margin
+        || x > modal_area.width + modal_area.x
+        || y < modal_area.y + margin
+        || y > modal_area.y + modal_area.height
+    {
+        return;
+    }
+
+    let rel_x = x.saturating_sub(modal_area.x + margin);
+
+    let modal_width = modal_area.width.saturating_sub(margin * 2);
+    let button_width = modal_width / 2;
+
+    let dialog_data = state.confirmation_dialog_data.as_ref().unwrap();
+
+    if rel_x < button_width {
+        let on_confirm = Rc::clone(&dialog_data.callbacks.on_confirm);
+        on_confirm(state);
+    } else {
+        let on_cancel = Rc::clone(&dialog_data.callbacks.on_cancel);
+        on_cancel(state);
     }
 }
