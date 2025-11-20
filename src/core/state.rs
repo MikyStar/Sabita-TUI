@@ -310,6 +310,21 @@ impl State<'_> {
         }
     }
 
+    pub fn ask_new_game(&mut self) {
+        let dialog = ConfirmationDialogData {
+            title: "New grid",
+            description: "Are you sure you want to start a new grid ?",
+            callbacks: ConfirmationDialogCallbacks {
+                on_confirm: Rc::new(|state| {
+                    state.new_from_same_difficulty();
+                    state.clear_dialog();
+                }),
+                on_cancel: Rc::new(|state| state.clear_dialog()),
+            },
+        };
+
+        self.confirmation_dialog_data = Some(dialog);
+    }
     pub fn new_from_same_difficulty(&mut self) {
         let new_streak = match self.is_solved {
             Some(true) => self.streak + 1,
@@ -322,6 +337,22 @@ impl State<'_> {
 
     pub fn toggle_fullscreen(&mut self) {
         self.is_fullscreen = !self.is_fullscreen;
+    }
+
+    pub fn ask_solve(&mut self) {
+        let dialog = ConfirmationDialogData {
+            title: "Solve",
+            description: "Are you sure you want to solve this grid ?",
+            callbacks: ConfirmationDialogCallbacks {
+                on_confirm: Rc::new(|state| {
+                    state.solve();
+                    state.clear_dialog();
+                }),
+                on_cancel: Rc::new(|state| state.clear_dialog()),
+            },
+        };
+
+        self.confirmation_dialog_data = Some(dialog);
     }
 
     pub fn solve(&mut self) {

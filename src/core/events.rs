@@ -43,12 +43,12 @@ pub fn handle_inputs(state: &mut State) -> io::Result<bool> {
                     let on_cancel = Rc::clone(&dialog_data.callbacks.on_cancel);
                     on_cancel(state);
                 }
-                None => state.new_from_same_difficulty(),
+                None => state.ask_new_game(),
             },
             KeyCode::Char('r') => state.ask_reset(),
             KeyCode::Char('+') => state.increase_difficulty(),
             KeyCode::Char('-') => state.decrease_difficulty(),
-            KeyCode::Char('s') => state.solve(),
+            KeyCode::Char('s') => state.ask_solve(),
             KeyCode::Char('f') => state.toggle_fullscreen(),
             KeyCode::Char('q') | KeyCode::Esc => return Ok(true),
             _ => {}
